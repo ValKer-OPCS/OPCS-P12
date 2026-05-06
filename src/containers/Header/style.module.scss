@@ -1,0 +1,24 @@
+.headerContainer{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+
+    background-color: #282c34;
+    border-bottom: 1px solid #3e4451;
+
+
+
+}
+
+.navBar{
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    font-family: Montserrat;
+    a {
+        text-decoration: none;
+        color: white;
+    }
+}
