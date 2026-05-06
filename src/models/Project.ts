@@ -12,6 +12,8 @@ const ProjectSchema = new Schema({
   thumbnail: { type: String },
   carouselImages: [{ type: String }],
   date: { type: Number },
+  hero: { type: Boolean, default: false },
+
 });
 
 export default models.Project || model("Project", ProjectSchema);
