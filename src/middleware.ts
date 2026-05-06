@@ -2,42 +2,34 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import jwt from "jsonwebtoken";
 
-export function middleware(req: NextRequest) {
-  const pathname = req.nextUrl.pathname;
+const PUBLIC_ROUTES = [
+  { path: "/api/auth", method: "ALL" },
+  { path: "/api/projects", method: "GET" },
+];
+
+const isPublic = (pathname: string, method: string) =>
+  PUBLIC_ROUTES.some(route => {
+    const matchPath =
+      pathname === route.path ||
+      pathname.startsWith(route.path + "/");
+
+    const matchMethod =
+      route.method === "ALL" || route.method === method;
+
+    return matchPath && matchMethod;
+  });
+
+export const middleware = (req: NextRequest) => {
+  const { pathname } = req.nextUrl;
   const method = req.method;
 
-  // --- PUBLIC ---
-  if (pathname === "/api/messages" && method === "POST") {
+  if (isPublic(pathname, method)) {
     return NextResponse.next();
   }
 
-  if (pathname.startsWith("/api/projects") && method === "GET") {
-    return NextResponse.next();
-  }
-
-  if (pathname.startsWith("/api/auth/login")) {
-    return NextResponse.next();
-  }
-
-  // --- PROTECTED ---
-  const protectedRoutes = [
-    "/api/messages",
-    "/api/projects",
-    "/api/images"
-  ];
-
-  const isProtected = protectedRoutes.some(route =>
-    pathname.startsWith(route)
-  );
-
-  if (!isProtected) {
-    return NextResponse.next();
-  }
-
-  // --- AUTH JWT ---
   const authHeader = req.headers.get("authorization");
 
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+  if (!authHeader?.startsWith("Bearer ")) {
     return new NextResponse("Unauthorized", { status: 401 });
   }
 
@@ -47,15 +39,10 @@ export function middleware(req: NextRequest) {
     jwt.verify(token, process.env.JWT_SECRET!);
     return NextResponse.next();
   } catch {
-    return new NextResponse("Invalid token", { status: 401 });
+    return new NextResponse("Unauthorized", { status: 401 });
   }
-}
+};
 
 export const config = {
-  matcher: [
-    "/api/messages/:path*",
-    "/api/projects/:path*",
-    "/api/images/:path*",
-    "/api/auth/:path*"
-  ]
+  matcher: ["/api/:path*"],
 };
