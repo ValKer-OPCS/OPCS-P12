@@ -3,7 +3,7 @@ import type { NextRequest } from "next/server";
 import jwt from "jsonwebtoken";
 
 const PUBLIC_ROUTES = [
-  { path: "/api/auth", method: "ALL" },
+  { path: "/api/auth", method: "POST" },
   { path: "/api/projects", method: "GET" },
   { path: "/api/messages", method: "POST" },
 ];
@@ -15,7 +15,7 @@ const isPublic = (pathname: string, method: string) =>
       pathname.startsWith(route.path + "/");
 
     const matchMethod =
-      route.method === "ALL" || route.method === method;
+      route.method === method;
 
     return matchPath && matchMethod;
   });
