@@ -20,7 +20,7 @@ const isPublic = (pathname: string, method: string) =>
     return matchPath && matchMethod;
   });
 
-export const middleware = (req: NextRequest) => {
+export const proxy = (req: NextRequest) => {
   const { pathname } = req.nextUrl;
   const method = req.method;
 
