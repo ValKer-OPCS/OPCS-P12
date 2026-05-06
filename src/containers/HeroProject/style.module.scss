@@ -1,0 +1,41 @@
+.projectsContainerTitle{
+
+  justify-self: center;
+  margin-top: 50px;
+  color: white;
+  font-family: Montserrat;
+  font-size: 35px;
+
+}
+
+.projectsContainer{
+  margin-top: 50px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 40px;
+  justify-content: center;
+}
+
+.filters {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  justify-content: center;
+  margin-top: 25px;
+
+  button {
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    border: 1px solid #3e4451;
+    background: transparent;
+    cursor: pointer;
+    transition: 0.2s;
+    color: white;
+
+    &.active {
+      background: #3e4451;
+      color: white;
+    }
+  }
+}
