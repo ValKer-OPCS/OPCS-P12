@@ -5,6 +5,7 @@ import jwt from "jsonwebtoken";
 const PUBLIC_ROUTES = [
   { path: "/api/auth", method: "ALL" },
   { path: "/api/projects", method: "GET" },
+  { path: "/api/messages", method: "POST" },
 ];
 
 const isPublic = (pathname: string, method: string) =>
