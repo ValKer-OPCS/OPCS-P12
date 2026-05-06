@@ -4,16 +4,37 @@ import jwt from "jsonwebtoken";
 
 export function middleware(req: NextRequest) {
   const pathname = req.nextUrl.pathname;
+  const method = req.method;
 
-  const isProtected = pathname.startsWith("/api/messages");
-
-
-  if (isProtected && req.method === "POST") {
+  // --- PUBLIC ---
+  if (pathname === "/api/messages" && method === "POST") {
     return NextResponse.next();
   }
 
-  if (!isProtected) return NextResponse.next();
+  if (pathname.startsWith("/api/projects") && method === "GET") {
+    return NextResponse.next();
+  }
 
+  if (pathname.startsWith("/api/auth/login")) {
+    return NextResponse.next();
+  }
+
+  // --- PROTECTED ---
+  const protectedRoutes = [
+    "/api/messages",
+    "/api/projects",
+    "/api/images"
+  ];
+
+  const isProtected = protectedRoutes.some(route =>
+    pathname.startsWith(route)
+  );
+
+  if (!isProtected) {
+    return NextResponse.next();
+  }
+
+  // --- AUTH JWT ---
   const authHeader = req.headers.get("authorization");
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -31,5 +52,10 @@ export function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/api/messages/:path*"],
+  matcher: [
+    "/api/messages/:path*",
+    "/api/projects/:path*",
+    "/api/images/:path*",
+    "/api/auth/:path*"
+  ]
 };
