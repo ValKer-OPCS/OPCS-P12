@@ -1,0 +1,29 @@
+{
+  "projects": [
+    {
+      "id": 1,
+      "title": "Portfolio personnel",
+      "slug": "portfolio-personnel",
+      "shortDescription": "Création d'un portfolio moderne en Next.js, avec une architecture modulaire, un design cohérent et une attention particulière à la performance.",
+      "longDescription": "Création d'un portfolio moderne en Next.js, pensé avec une architecture modulaire pour garantir évolutivité et maintenance. L'interface adopte un design cohérent et soigné, mettant en valeur chaque section avec une expérience fluide. Le projet s’appuie sur React, TypeScript et SCSS pour offrir performance, robustesse et qualité de code.",
+      "technologies": ["React", "Next.js", "TypeScript", "SCSS"],
+      "github": "https://github.com/valentin/portfolio",
+      "demo": "http://localhost:3000",
+      "thumbnail": "/og-image.png",
+      "carouselImages" : ["/01.jpg", "/02.jpg", "/03.jpg"],
+      "date": 2026
+    },
+    {
+      "id": 2,
+      "title": "Dashboard analytique",
+      "slug": "dashboard-analytique",
+      "shortDescription": "Développement d'un dashboard interactif avec visualisations dynamiques, gestion d’état optimisée et intégration API.",
+      "longDescription": "Confestim ut acervis perpensum licet tenus committerentur crimina ut committerentur in implacabilitati in fecere vox principes tenus tenus praescriptis implacabilitati quaerebatur ulla sedisset implacabilitati praescriptis vox his quicquid acervis legum confestim sedisset implacabilitati sed principes his fecere id Caesaris fas.",
+      "technologies": ["React", "Recharts", "Zustand", "Node.js"],
+      "github": "https://github.com/valentin/dashboard",
+      "demo": null,
+      "thumbnail": "/og-image.png",
+      "carouselImages" : ["/01.jpg", "/02.jpg", "/03.jpg"],
+      "date": 2026
+    }]
+}
