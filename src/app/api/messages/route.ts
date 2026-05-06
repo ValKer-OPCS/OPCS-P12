@@ -39,7 +39,7 @@ export const POST = async (req: Request) => {
       { status: 201 }
     );
   } catch (error) {
-    console.error("Erreur API contact:", error);
+    console.error("Erreur API message:", error);
     return NextResponse.json(
       { success: false, message: "Erreur interne du serveur." },
       { status: 500 }
