@@ -4,8 +4,7 @@ import { NextResponse } from "next/server";
 import { dbConnect } from "@/lib/db";
 import Project from "@/models/Project";
 
-// GET public
-export async function GET() {
+export const GET = async () => {
   try {
     await dbConnect();
     const projects = await Project.find().sort({ date: -1 }).lean();
@@ -15,8 +14,7 @@ export async function GET() {
   }
 }
 
-// POST admin
-export async function POST(req: Request) {
+export const POST = async (req: Request) => {
   try {
     await dbConnect();
     const body = await req.json();

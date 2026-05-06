@@ -5,7 +5,7 @@ import { dbConnect } from "@/lib/db";
 import Message from "@/models/Message";
 
 // GET /api/messages/:id
-export async function GET(_: Request, { params }: { params: { id: string } }) {
+export const GET = async (_: Request, { params }: { params: { id: string } }) => {
   try {
     await dbConnect();
 
@@ -26,10 +26,10 @@ export async function GET(_: Request, { params }: { params: { id: string } }) {
       { status: 500 }
     );
   }
-}
+};
 
 // PUT /api/messages/:id
-export async function PUT(req: Request, { params }: { params: { id: string } }) {
+export const PUT = async (req: Request, { params }: { params: { id: string } }) => {
   try {
     await dbConnect();
 
@@ -54,10 +54,10 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
       { status: 500 }
     );
   }
-}
+};
 
 // DELETE /api/messages/:id
-export async function DELETE(_: Request, { params }: { params: { id: string } }) {
+export const DELETE = async (_: Request, { params }: { params: { id: string } }) => {
   try {
     await dbConnect();
 
@@ -78,4 +78,4 @@ export async function DELETE(_: Request, { params }: { params: { id: string } })
       { status: 500 }
     );
   }
-}
+};

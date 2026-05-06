@@ -1,4 +1,4 @@
-export function getHttpErrorMessage(status: number): string {
+export const getHttpErrorMessage = (status: number): string => {
   switch (status) {
     case 400:
       return "La requête est invalide ou mal formulée.";
@@ -35,4 +35,4 @@ export function getHttpErrorMessage(status: number): string {
     default:
       return "Une erreur inattendue est survenue.";
   }
-}
+};

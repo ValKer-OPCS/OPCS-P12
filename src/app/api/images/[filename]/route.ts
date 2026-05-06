@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 import { unlink } from "fs/promises";
 import path from "path";
 
-export async function DELETE(_: Request, { params }: { params: { filename: string } }) {
+export const DELETE = async (_: Request, { params }: { params: { filename: string } }) => {
   try {
     const filepath = path.join(process.cwd(), "public/uploads", params.filename);
 
@@ -14,4 +14,4 @@ export async function DELETE(_: Request, { params }: { params: { filename: strin
   } catch {
     return NextResponse.json({ success: false, message: "Image introuvable" }, { status: 404 });
   }
-}
+};

@@ -3,7 +3,7 @@ export const runtime = "nodejs";
 import { NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
 
-export async function POST(req: Request) {
+export const POST = async (req: Request) => {
   const { username, password } = await req.json();
 
   if (
@@ -23,4 +23,4 @@ export async function POST(req: Request) {
   );
 
   return NextResponse.json({ success: true, token });
-}
+};

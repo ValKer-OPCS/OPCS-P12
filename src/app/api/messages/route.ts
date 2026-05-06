@@ -4,11 +4,12 @@ import { NextResponse } from "next/server";
 import { dbConnect } from "@/lib/db";
 import Message from "@/models/Message";
 
-export async function POST(req: Request) {
+export const POST = async (req: Request) => {
   try {
     await dbConnect();
 
-    const { name, email, message, companyName, gdprConsent } = await req.json();
+    const { name, email, message, companyName, gdprConsent } =
+      await req.json();
 
     if (!name || !email || !message) {
       return NextResponse.json(
@@ -37,7 +38,6 @@ export async function POST(req: Request) {
       { success: true, data: saved },
       { status: 201 }
     );
-
   } catch (error) {
     console.error("Erreur API contact:", error);
     return NextResponse.json(
@@ -45,4 +45,4 @@ export async function POST(req: Request) {
       { status: 500 }
     );
   }
-}
+};

@@ -13,7 +13,7 @@ declare global {
     } | undefined;
 }
 
-export async function dbConnect() {
+export const dbConnect = async (): Promise<Mongoose> => {
     const cached = global.mongooseCache || {
         conn: null,
         promise: null,

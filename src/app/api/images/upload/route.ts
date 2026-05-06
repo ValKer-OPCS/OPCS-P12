@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 import { writeFile } from "fs/promises";
 import path from "path";
 
-export async function POST(req: Request) {
+export const POST = async (req: Request) => {
   try {
     const formData = await req.formData();
     const file = formData.get("file") as File;
@@ -28,4 +28,4 @@ export async function POST(req: Request) {
   } catch {
     return NextResponse.json({ success: false, message: "Erreur upload" }, { status: 500 });
   }
-}
+};

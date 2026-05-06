@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 import { dbConnect } from "@/lib/db";
 import Project from "@/models/Project";
 
-// GET public
+
 export async function GET(_: Request, { params }: { params: { id: string } }) {
   try {
     await dbConnect();
@@ -18,8 +18,7 @@ export async function GET(_: Request, { params }: { params: { id: string } }) {
   }
 }
 
-// PATCH admin (modification partielle)
-export async function PATCH(req: Request, { params }: { params: { id: string } }) {
+export const PATCH = async (req: Request, { params }: { params: { id: string } }) => {
   try {
     await dbConnect();
     const body = await req.json();
@@ -34,10 +33,10 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
   } catch {
     return NextResponse.json({ success: false, message: "Erreur serveur" }, { status: 500 });
   }
-}
+};
 
-// DELETE admin
-export async function DELETE(_: Request, { params }: { params: { id: string } }) {
+
+export const DELETE = async (_: Request, { params }: { params: { id: string } }) => {
   try {
     await dbConnect();
     const deleted = await Project.findByIdAndDelete(params.id);
@@ -50,4 +49,4 @@ export async function DELETE(_: Request, { params }: { params: { id: string } })
   } catch {
     return NextResponse.json({ success: false, message: "Erreur serveur" }, { status: 500 });
   }
-}
+};
