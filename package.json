@@ -14,8 +14,11 @@
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.6.1",
     "next": "16.2.4",
+    "openapi3-ts": "^4.5.0",
     "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "react-dom": "19.2.4",
+    "swagger-ui-express": "^5.0.1",
+    "swagger-ui-react": "^5.32.5"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.9.1",
@@ -26,12 +29,14 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/swagger-ui-react": "^5.18.0",
     "babel-plugin-react-compiler": "1.0.0",
     "eslint": "^9",
     "eslint-config-next": "16.2.4",
     "jest": "^30.3.0",
     "sass": "^1.99.0",
     "ts-jest": "^29.4.9",
+    "ts-node": "^10.9.2",
     "typescript": "^5"
   }
 }
