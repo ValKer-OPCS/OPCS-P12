@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import AuthForm from "@/components/AuthForm/AuthForm";
 
-export default function LoginPage() {
+const LoginPage = () => {
   const router = useRouter();
   const [checking, setChecking] = useState(true);
 
@@ -53,4 +53,6 @@ export default function LoginPage() {
       <AuthForm />
     </div>
   );
-}
+};
+
+export default LoginPage;
