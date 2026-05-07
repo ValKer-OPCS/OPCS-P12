@@ -19,10 +19,19 @@ export const POST = async (req: Request) => {
     await dbConnect();
     const body = await req.json();
 
-    const project = await Project.create(body);
+    const project = await Project.create({
+      ...body,
+      id: Date.now(),
+      thumbnail: null,
+      carouselImages: []
+    });
 
     return NextResponse.json({ success: true, data: project }, { status: 201 });
-  } catch {
-    return NextResponse.json({ success: false, message: "Erreur serveur" }, { status: 500 });
+  } catch (err) {
+    console.error("Erreur backend:", err);
+    return NextResponse.json(
+      { success: false, message: "Erreur serveur" },
+      { status: 500 }
+    );
   }
-}
+};
