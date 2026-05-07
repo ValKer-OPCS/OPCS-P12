@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import ProjectsDashboard from "@/containers/DashboardProject/DashboardProject";
 
 const DashboardPage = () => {
   const router = useRouter();
@@ -47,7 +48,11 @@ const DashboardPage = () => {
     return null;
   }
 
-  return <div>DASHBOARD</div>;
+    return (
+    <div>
+      <ProjectsDashboard />
+    </div>
+  )
 };
 
 export default DashboardPage;
