@@ -18,12 +18,13 @@ export async function GET(_: Request, { params }: { params: { id: string } }) {
   }
 }
 
-export const PATCH = async (req: Request, { params }: { params: { id: string } }) => {
+export const PATCH = async (req: Request, context: { params: Promise<{ id: string }> }) => {
+  const { id } = await context.params;
   try {
     await dbConnect();
     const body = await req.json();
 
-    const updated = await Project.findByIdAndUpdate(params.id, body, { new: true });
+    const updated = await Project.findByIdAndUpdate(id, body, { new: true });
 
     if (!updated) {
       return NextResponse.json({ success: false, message: "Projet introuvable" }, { status: 404 });

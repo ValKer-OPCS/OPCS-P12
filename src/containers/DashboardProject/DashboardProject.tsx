@@ -1,5 +1,6 @@
 import AdminProjectUploader from '@/components/AdminProjectUploader/AdminProjectUploader'
 import AdminProjectDeleter from '@/components/AdminProjectDeleter/AdminProjectDeleter'
+import AdminProjectUpdater from '@/components/AdminProjectUpdater/AdminProjectUpdater'
 
 
 const DashboardProject = () => {
@@ -8,6 +9,8 @@ const DashboardProject = () => {
       <AdminProjectUploader/>
 
       <AdminProjectDeleter />
+
+      <AdminProjectUpdater />
     </div>
   )
 };

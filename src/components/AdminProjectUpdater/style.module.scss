@@ -1,0 +1,86 @@
+.updateForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  padding: 2rem;
+  background: #fafafa;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  max-width: 500px;
+  width: 100%;
+
+
+  h2 {
+    margin: 0;
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: #000;
+    text-align: center;
+  }
+
+  label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    font-size: 0.95rem;
+    color: #000;
+
+    input,
+    textarea {
+      padding: 0.7rem 1rem;
+      border-radius: 6px;
+      border: 1px solid #ddd;
+      background: #fafafa;
+      color: #000;
+      font-size: 0.95rem;
+      transition: border-color 0.2s ease;
+
+      &:focus {
+        border-color: #6ab0ff;
+        outline: none;
+      }
+    }
+
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+  }
+
+  button {
+    margin-top: 0.5rem;
+    padding: 0.8rem 1rem;
+    background: #0070f3;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+
+    &:hover {
+      background: #005fcc;
+    }
+  }
+
+  .message {
+    margin-top: 0.5rem;
+    padding: 0.8rem 1rem;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    text-align: center;
+
+    &.success {
+      background: rgba(0, 255, 120, 0.15);
+      border: 1px solid rgba(0, 255, 120, 0.4);
+      color: #00ff78;
+    }
+
+    &.error {
+      background: rgba(255, 80, 80, 0.15);
+      border: 1px solid rgba(255, 80, 80, 0.4);
+      color: #ff5050;
+    }
+  }
+}
