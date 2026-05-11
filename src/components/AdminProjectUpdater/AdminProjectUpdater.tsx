@@ -11,7 +11,7 @@ type UpdateFields = {
   demo: string;
   date: string;
   hero: boolean;
-  technologies: string;
+  technologies: string; // champ texte contenant toutes les tech
 };
 
 type UpdateFieldKey = keyof UpdateFields;
@@ -32,6 +32,44 @@ const AdminProjectUpdater = () => {
   const [message, setMessage] = useState("");
   const [status, setStatus] = useState<"success" | "error" | "">("");
 
+  const loadProject = async () => {
+    if (!id.trim()) {
+      setMessage("Veuillez entrer un ID");
+      setStatus("error");
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/projects/${id}`);
+      const data = await res.json();
+
+      if (!data.success || !data.data) {
+        setMessage("Projet introuvable");
+        setStatus("error");
+        return;
+      }
+
+      const p = data.data;
+
+      setFields({
+        title: p.title || "",
+        shortDescription: p.shortDescription || "",
+        longDescription: p.longDescription || "",
+        github: p.github || "",
+        demo: p.demo || "",
+        date: p.date ? p.date.substring(0, 10) : "",
+        hero: p.hero || false,
+        technologies: p.technologies?.join(", ") || "",
+      });
+
+      setMessage("Projet chargé");
+      setStatus("success");
+    } catch {
+      setMessage("Erreur lors du chargement du projet");
+      setStatus("error");
+    }
+  };
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -44,7 +82,7 @@ const AdminProjectUpdater = () => {
     }
   };
 
-  const handleUpdate = async (e: React.SubmitEvent) => {
+  const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     setMessage("");
     setStatus("");
@@ -66,16 +104,20 @@ const AdminProjectUpdater = () => {
 
     (Object.entries(fields) as [UpdateFieldKey, string | boolean][]).forEach(
       ([key, value]) => {
-
         if (key === "hero") {
-          if (value === true) body[key] = true;
+          body[key] = value;
           return;
         }
 
         if (key === "technologies") {
-          if (typeof value === "string" && value.trim() !== "") {
-            body[key] = value.split(",").map((t: string) => t.trim());
+          const text = value as string;
+
+          if (text.trim() === "") {
+            body[key] = [];
+            return;
           }
+
+          body[key] = text.split(",").map((t: string) => t.trim());
           return;
         }
 
@@ -139,13 +181,16 @@ const AdminProjectUpdater = () => {
         />
       </label>
 
+      <button type="button" onClick={loadProject}>
+        Charger le projet
+      </button>
+
       <label>
         Nouveau titre
         <input
           name="title"
           value={fields.title}
           onChange={handleChange}
-          placeholder="Laisser vide pour ne pas modifier"
         />
       </label>
 
@@ -155,7 +200,6 @@ const AdminProjectUpdater = () => {
           name="shortDescription"
           value={fields.shortDescription}
           onChange={handleChange}
-          placeholder="Laisser vide pour ne pas modifier"
         />
       </label>
 
@@ -165,7 +209,6 @@ const AdminProjectUpdater = () => {
           name="longDescription"
           value={fields.longDescription}
           onChange={handleChange}
-          placeholder="Laisser vide pour ne pas modifier"
         />
       </label>
 
@@ -175,7 +218,6 @@ const AdminProjectUpdater = () => {
           name="github"
           value={fields.github}
           onChange={handleChange}
-          placeholder="Laisser vide pour ne pas modifier"
         />
       </label>
 
@@ -185,7 +227,6 @@ const AdminProjectUpdater = () => {
           name="demo"
           value={fields.demo}
           onChange={handleChange}
-          placeholder="Laisser vide pour ne pas modifier"
         />
       </label>
 
@@ -202,11 +243,19 @@ const AdminProjectUpdater = () => {
       <label className={styles.checkbox}>
         <input
           type="checkbox"
-          name="hero"
-          checked={fields.hero}
-          onChange={handleChange}
+          checked={fields.hero === true}
+          onChange={() => setFields({ ...fields, hero: true })}
         />
-        Mettre en avant (hero)
+        Mettre en avant (hero = true)
+      </label>
+
+      <label className={styles.checkbox}>
+        <input
+          type="checkbox"
+          checked={fields.hero === false}
+          onChange={() => setFields({ ...fields, hero: false })}
+        />
+        Ne pas mettre en avant (hero = false)
       </label>
 
       <label>
@@ -215,7 +264,6 @@ const AdminProjectUpdater = () => {
           name="technologies"
           value={fields.technologies}
           onChange={handleChange}
-          placeholder="ex: React, Next.js, TypeScript"
         />
       </label>
 
@@ -223,13 +271,12 @@ const AdminProjectUpdater = () => {
 
       {message && (
         <p
-          className={`${styles.message} ${
-            status === "success"
-              ? styles.success
-              : status === "error"
+          className={`${styles.message} ${status === "success"
+            ? styles.success
+            : status === "error"
               ? styles.error
               : ""
-          }`}
+            }`}
         >
           {message}
         </p>

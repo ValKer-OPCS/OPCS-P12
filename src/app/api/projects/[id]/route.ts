@@ -5,10 +5,11 @@ import { dbConnect } from "@/lib/db";
 import Project from "@/models/Project";
 
 
-export async function GET(_: Request, { params }: { params: { id: string } }) {
+export const GET = async (req: Request, context: { params: Promise<{ id: string }> }) => {
+  const { id } = await context.params;
   try {
     await dbConnect();
-    const project = await Project.findById(params.id);
+    const project = await Project.findById(id);
     if (!project) {
       return NextResponse.json({ success: false, message: "Projet introuvable" }, { status: 404 });
     }
@@ -16,7 +17,8 @@ export async function GET(_: Request, { params }: { params: { id: string } }) {
   } catch {
     return NextResponse.json({ success: false, message: "Erreur serveur" }, { status: 500 });
   }
-}
+};
+
 
 export const PATCH = async (req: Request, context: { params: Promise<{ id: string }> }) => {
   const { id } = await context.params;
