@@ -24,7 +24,7 @@ export const PATCH = async (req: Request, context: { params: Promise<{ id: strin
     await dbConnect();
     const body = await req.json();
 
-    const updated = await Project.findByIdAndUpdate(id, body, { new: true });
+    const updated = await Project.findByIdAndUpdate(id, body, { returnDocument: "after" });
 
     if (!updated) {
       return NextResponse.json({ success: false, message: "Projet introuvable" }, { status: 404 });
