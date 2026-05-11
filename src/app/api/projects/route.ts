@@ -21,7 +21,6 @@ export const POST = async (req: Request) => {
 
     const project = await Project.create({
       ...body,
-      id: Date.now(),
       thumbnail: null,
       carouselImages: []
     });

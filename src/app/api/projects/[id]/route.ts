@@ -36,17 +36,25 @@ export const PATCH = async (req: Request, { params }: { params: { id: string } }
 };
 
 
-export const DELETE = async (_: Request, { params }: { params: { id: string } }) => {
+export const DELETE = async (req: Request, context: { params: Promise<{ id: string }> }) => {
+  const { id } = await context.params;
+
   try {
     await dbConnect();
-    const deleted = await Project.findByIdAndDelete(params.id);
+    const deleted = await Project.findByIdAndDelete(id);
 
     if (!deleted) {
-      return NextResponse.json({ success: false, message: "Projet introuvable" }, { status: 404 });
+      return NextResponse.json(
+        { success: false, message: "Projet introuvable" },
+        { status: 404 }
+      );
     }
 
     return NextResponse.json({ success: true });
   } catch {
-    return NextResponse.json({ success: false, message: "Erreur serveur" }, { status: 500 });
+    return NextResponse.json(
+      { success: false, message: "Erreur serveur" },
+      { status: 500 }
+    );
   }
 };

@@ -2,7 +2,6 @@ import { Schema, model, models } from "mongoose";
 
 const ProjectSchema = new Schema({
 
-  id: { type: Number, required: true, unique: true },
   title: { type: String, required: true },
   slug: { type: String, required: true, unique: true },
   shortDescription: { type: String, required: true },
