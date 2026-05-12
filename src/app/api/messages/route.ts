@@ -29,7 +29,7 @@ const contactSchema = z.object({
   companyName: z.string().max(200).optional(),
   gdprConsent: z.boolean(),
   userAgent: z.string().optional(),
-  website: z.string().optional()
+  secondaryEmail: z.string().optional()
 });
 
 export const POST = async (req: Request) => {
@@ -56,10 +56,10 @@ export const POST = async (req: Request) => {
       );
     }
 
-    const { name, email, message, companyName, gdprConsent, userAgent, website } =
+    const { name, email, message, companyName, gdprConsent, userAgent, secondaryEmail } =
       parsed.data;
 
-    if (website && website.length > 0) {
+    if (secondaryEmail && secondaryEmail.length > 0) {
       return NextResponse.json(
         { success: false, message: "Requête invalide." },
         { status: 400 }

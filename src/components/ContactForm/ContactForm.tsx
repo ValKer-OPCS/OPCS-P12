@@ -22,9 +22,9 @@ const ContactForm = () => {
     const message = (form.elements.namedItem("message") as HTMLTextAreaElement).value;
     const companyName = (form.elements.namedItem("companyName") as HTMLInputElement)?.value || null;
     const gdprConsent = (form.elements.namedItem("gdprConsent") as HTMLInputElement).checked;
-    const website = (form.elements.namedItem("website") as HTMLInputElement).value;
+    const secondaryEmail = (form.elements.namedItem("secondaryEmail") as HTMLInputElement).value;
 
-    const data = { name, email, message, companyName, gdprConsent, userAgent: navigator.userAgent, website };
+    const data = { name, email, message, companyName, gdprConsent, userAgent: navigator.userAgent, secondaryEmail };
 
     try {
       const res = await fetch("/api/messages", {
@@ -50,7 +50,7 @@ const ContactForm = () => {
   return (
     <form role="form" onSubmit={handleSubmit} className={style.form}>
 
-      <input type="text" name="website" tabIndex={-1} autoComplete="off" style={{ display: "none" }} />
+      <input type="text" name="secondaryEmail" tabIndex={-1} autoComplete="off" style={{ display: "none" }} />
 
       <label className={style.label}>
         <span>Nom</span>
