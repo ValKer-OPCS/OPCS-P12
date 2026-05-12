@@ -51,7 +51,7 @@ export const POST = async (req: Request) => {
 
     if (!parsed.success) {
       return NextResponse.json(
-        { success: false, message: "Données invalides." },
+        { success: false, message: "Requête invalide." },
         { status: 400 }
       );
     }
