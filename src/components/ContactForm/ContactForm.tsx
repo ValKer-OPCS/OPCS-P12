@@ -17,14 +17,14 @@ const ContactForm = () => {
 
     const form = e.currentTarget;
 
-    const data = {
-      name: (form.elements.namedItem("name") as HTMLInputElement).value,
-      email: (form.elements.namedItem("email") as HTMLInputElement).value,
-      message: (form.elements.namedItem("message") as HTMLTextAreaElement).value,
-      companyName: (form.elements.namedItem("companyName") as HTMLInputElement)?.value || null,
-      gdprConsent: (form.elements.namedItem("gdprConsent") as HTMLInputElement).checked,
-      userAgent: navigator.userAgent
-    };
+    const name = (form.elements.namedItem("name") as HTMLInputElement).value;
+    const email = (form.elements.namedItem("email") as HTMLInputElement).value;
+    const message = (form.elements.namedItem("message") as HTMLTextAreaElement).value;
+    const companyName = (form.elements.namedItem("companyName") as HTMLInputElement)?.value || null;
+    const gdprConsent = (form.elements.namedItem("gdprConsent") as HTMLInputElement).checked;
+    const website = (form.elements.namedItem("website") as HTMLInputElement).value;
+
+    const data = { name, email, message, companyName, gdprConsent, userAgent: navigator.userAgent, website };
 
     try {
       const res = await fetch("/api/messages", {
@@ -33,7 +33,7 @@ const ContactForm = () => {
         body: JSON.stringify(data)
       });
 
-       if (!res.ok) {
+      if (!res.ok) {
         const message = getHttpErrorMessage(res.status);
         throw new Error(message);
       }
@@ -41,7 +41,7 @@ const ContactForm = () => {
       setSuccess(true);
       form.reset();
     } catch (err) {
-       setError(err instanceof Error ? err.message : "Erreur inconnue.");
+      setError(err instanceof Error ? err.message : "Erreur inconnue.");
     } finally {
       setLoading(false);
     }
@@ -49,6 +49,9 @@ const ContactForm = () => {
 
   return (
     <form role="form" onSubmit={handleSubmit} className={style.form}>
+
+      <input type="text" name="website" tabIndex={-1} autoComplete="off" style={{ display: "none" }} />
+
       <label className={style.label}>
         <span>Nom</span>
         <input type="text" name="name" required className={style.input} />
@@ -60,7 +63,7 @@ const ContactForm = () => {
       </label>
 
       <label className={style.label}>
-        <span>Entreprise (optionel)</span>
+        <span>Entreprise (optionnel)</span>
         <input type="text" name="companyName" className={style.input} />
       </label>
 

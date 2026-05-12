@@ -1,65 +1,115 @@
 import { NextResponse } from "next/server";
+import sanitizeHtml from "sanitize-html";
+import { z } from "zod";
 import nodemailer from "nodemailer";
+import { Ratelimit } from "@upstash/ratelimit";
+import { Redis } from "@upstash/redis";
+
+
+const redis = Redis.fromEnv();
+const limiter = new Ratelimit({
+  redis,
+  limiter: Ratelimit.slidingWindow(3, "1m"),
+});
+
+
+const sanitize = (value: string) =>
+  sanitizeHtml(value, {
+    allowedTags: [],
+    allowedAttributes: {}
+  }).trim();
+
+
+const contactSchema = z.object({
+  name: z.string().min(2).max(100),
+  email: z.email(),
+  message: z.string().min(10).max(2000),
+  companyName: z.string().max(200).optional(),
+  gdprConsent: z.boolean(),
+  userAgent: z.string().optional(),
+  website: z.string().optional()
+});
 
 export const POST = async (req: Request) => {
   try {
-    const { name, email, message, companyName, gdprConsent, userAgent } =
-      await req.json();
 
-    if (!name || !email || !message) {
+    const ip = req.headers.get("x-forwarded-for") ?? "unknown";
+    const { success: allowed } = await limiter.limit(ip);
+
+    if (!allowed) {
       return NextResponse.json(
-        { success: false, message: "Tous les champs obligatoires doivent être remplis." },
+        { success: false, message: "Trop de tentatives, réessayez plus tard." },
+        { status: 429 }
+      );
+    }
+
+
+    const body = await req.json();
+    const parsed = contactSchema.safeParse(body);
+
+    if (!parsed.success) {
+      return NextResponse.json(
+        { success: false, message: "Données invalides." },
         { status: 400 }
       );
     }
 
-    if (gdprConsent !== true) {
+    const { name, email, message, companyName, gdprConsent, userAgent, website } =
+      parsed.data;
+
+    if (website && website.length > 0) {
+      return NextResponse.json(
+        { success: false, message: "Bot détecté." },
+        { status: 400 }
+      );
+    }
+
+    if (!gdprConsent) {
       return NextResponse.json(
         { success: false, message: "Le consentement RGPD est obligatoire." },
         { status: 400 }
       );
     }
 
+    if (/[\r\n]/.test(email)) {
+      return NextResponse.json(
+        { success: false, message: "Email invalide." },
+        { status: 400 }
+      );
+    }
+
+
+    const cleanName = sanitize(name);
+    const cleanEmail = sanitize(email);
+    const cleanMessage = sanitize(message);
+    const cleanCompany = sanitize(companyName || "");
+    const cleanUA = sanitize(userAgent || "");
 
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
       port: Number(process.env.SMTP_PORT),
       secure: false,
-      tls: {
-    rejectUnauthorized: false},
       auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS
       }
     });
 
-    const mailOptions = {
+    await transporter.sendMail({
       from: `"Portfolio Contact" <${process.env.SMTP_USER}>`,
       to: process.env.CONTACT_TO,
-      subject: `Nouveau message de ${name}`,
+      subject: `Nouveau message de ${cleanName}`,
       text: `
-            Nom : ${name}
-            Email : ${email}
-            Entreprise : ${companyName || "Non renseignée"}
-            Consentement RGPD : ${gdprConsent ? "Oui" : "Non"}
-            User Agent : ${userAgent}
+            Nom : ${cleanName}
+            Email : ${cleanEmail}
+            Entreprise : ${cleanCompany}
+            Consentement RGPD : Oui
+            User Agent : ${cleanUA}
 
             Message :
-            ${message}
-      `,
-      html: `
-        <h2>Nouveau message reçu</h2>
-        <p><strong>Nom :</strong> ${name}</p>
-        <p><strong>Email :</strong> ${email}</p>
-        <p><strong>Entreprise :</strong> ${companyName || "Non renseignée"}</p>
-        <p><strong>Consentement RGPD :</strong> ${gdprConsent ? "Oui" : "Non"}</p>
-        <p><strong>User Agent :</strong> ${userAgent}</p>
-        <h3>Message :</h3>
-        <p>${message.replace(/\n/g, "<br>")}</p>
-      `
-    };
-
-    await transporter.sendMail(mailOptions);
+            ${cleanMessage}
+            `
+    });
 
     return NextResponse.json(
       { success: true, message: "Email envoyé avec succès." },
