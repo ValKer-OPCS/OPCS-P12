@@ -61,21 +61,21 @@ export const POST = async (req: Request) => {
 
     if (website && website.length > 0) {
       return NextResponse.json(
-        { success: false, message: "Bot détecté." },
+        { success: false, message: "Requête invalide." },
         { status: 400 }
       );
     }
 
     if (!gdprConsent) {
       return NextResponse.json(
-        { success: false, message: "Le consentement RGPD est obligatoire." },
+        { success: false, message: "Requête invalide." },
         { status: 400 }
       );
     }
 
     if (/[\r\n]/.test(email)) {
       return NextResponse.json(
-        { success: false, message: "Email invalide." },
+        { success: false, message: "Requête invalide." },
         { status: 400 }
       );
     }
