@@ -7,12 +7,14 @@ import Project from "@/models/Project";
 export const GET = async () => {
   try {
     await dbConnect();
-    const projects = await Project.find().sort({ date: -1 }).lean();
+    const projects = await Project.find().sort({ createdAt: -1 });
+
     return NextResponse.json({ success: true, data: projects });
   } catch {
-    return NextResponse.json({ success: false, message: "Erreur serveur" }, { status: 500 });
+    return NextResponse.json( { success: false, message: "Erreur serveur" }, { status: 500 });
   }
-}
+};
+
 
 export const POST = async (req: Request) => {
   try {

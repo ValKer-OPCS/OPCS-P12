@@ -1,16 +1,16 @@
 import AdminProjectUploader from '@/components/AdminProjectUploader/AdminProjectUploader'
-import AdminProjectDeleter from '@/components/AdminProjectDeleter/AdminProjectDeleter'
 import AdminProjectUpdater from '@/components/AdminProjectUpdater/AdminProjectUpdater'
+import AdminProject from '@/containers/AdminProject/AdminProject'
 
 
 const DashboardProject = () => {
   return (
     <div>
-      <AdminProjectUploader/>
+{/*       <AdminProjectUploader/>
 
-      <AdminProjectDeleter />
+      <AdminProjectUpdater /> */}
 
-      <AdminProjectUpdater />
+      <AdminProject />
     </div>
   )
 };
