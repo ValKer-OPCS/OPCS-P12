@@ -2,7 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import ProjectsDashboard from "@/containers/DashboardProject/DashboardProject";
+import AdminProjectUploader from '@/components/AdminModalUploader/AdminModalUploader'
+import AdminProjectUpdater from '@/components/AdminProjectUpdater/AdminProjectUpdater'
+import AdminProject from '@/containers/AdminProject/AdminProject'
 
 const DashboardPage = () => {
   const router = useRouter();
@@ -48,11 +50,14 @@ const DashboardPage = () => {
     return null;
   }
 
-    return (
+  return (
     <div>
 
 
-      <ProjectsDashboard />
+
+      <AdminProjectUpdater />
+
+      <AdminProject />
 
 
 
