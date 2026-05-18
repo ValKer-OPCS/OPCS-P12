@@ -31,7 +31,7 @@ const AdminModalUploader: React.FC<AdminModalUploaderProps> = ({ onClose }) => {
   };
 
   const handleSubmit = async () => {
-    const token = localStorage.getItem("jwt");
+    const token = localStorage.getItem("token");
     if (!token) return console.error("Token manquant");
 
     const res = await fetch("/api/projects", {

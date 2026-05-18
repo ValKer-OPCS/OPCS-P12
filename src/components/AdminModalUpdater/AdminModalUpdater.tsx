@@ -44,7 +44,8 @@ const AdminModalUpdater = ({ project, onClose, onUpdated }: AdminModalUpdaterPro
   if (!project) return null;
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => { const { name, value, type } = e.target;
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value, type } = e.target;
 
     if (type === "checkbox") {
       setFields((prev) => ({
@@ -59,7 +60,7 @@ const AdminModalUpdater = ({ project, onClose, onUpdated }: AdminModalUpdaterPro
     }
   };
 
-  const handleUpdate = async (e: React.FormEvent) => {
+  const handleUpdate = async (e: React.SubmitEvent) => {
     e.preventDefault();
     setMessage("");
     setStatus("");
@@ -125,11 +126,7 @@ const AdminModalUpdater = ({ project, onClose, onUpdated }: AdminModalUpdaterPro
 
   return (
     <div className={styles.overlay} onClick={onClose}>
-      <form
-        className={styles.updateForm}
-        onClick={(e) => e.stopPropagation()}
-        onSubmit={handleUpdate}
-      >
+      <form className={styles.updateForm} onClick={(e) => e.stopPropagation()} onSubmit={handleUpdate} >
         <h2>Modifier un projet</h2>
 
         <label>
@@ -175,7 +172,7 @@ const AdminModalUpdater = ({ project, onClose, onUpdated }: AdminModalUpdaterPro
         <button type="submit">Mettre à jour</button>
 
         {message && (
-          <p className={`${styles.message} ${ status === "success" ? styles.success : status === "error" ? styles.error : "" }`}>
+          <p className={`${styles.message} ${status === "success" ? styles.success : status === "error" ? styles.error : ""}`}>
             {message}
           </p>
         )}
