@@ -11,7 +11,7 @@ import { Redis } from "@upstash/redis";
 const redis = Redis.fromEnv();
 const limiter = new Ratelimit({
   redis,
-  limiter: Ratelimit.slidingWindow(3, "1m"),
+  limiter: Ratelimit.slidingWindow(10, "5m"),
 });
 
 
@@ -34,11 +34,29 @@ const contactSchema = z.object({
 
 export const POST = async (req: Request) => {
   try {
-
     const ip = req.headers.get("x-forwarded-for") ?? "unknown";
+
+    const banned = await redis.get(`ban:${ip}`);
+    if (banned) {
+      return NextResponse.json(
+        { success: false, message: "Vous n'êtes pas autorisé à accéder à cette ressource." },
+        { status: 403 }
+      );
+    }
+
     const { success: allowed } = await limiter.limit(ip);
 
-    if (!allowed) {
+     if (!allowed) {
+
+      const attempts = await redis.incr(`ban-attempts:${ip}`);
+
+
+      const banDurations = [300, 900, 1800, 3600, 43200];
+      const index = Math.min(attempts - 1, banDurations.length - 1);
+      const duration = banDurations[index];
+
+      await redis.set(`ban:${ip}`, "1", { ex: duration });
+
       return NextResponse.json(
         { success: false, message: "Trop de tentatives, réessayez plus tard." },
         { status: 429 }

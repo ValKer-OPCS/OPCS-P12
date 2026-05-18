@@ -2,14 +2,14 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import jwt from "jsonwebtoken";
 
-const PUBLIC_ROUTES = [
+const publicRoutes = [
   { path: "/api/auth", method: "POST" },
   { path: "/api/projects", method: "GET" },
   { path: "/api/messages", method: "POST" },
 ];
 
 const isPublic = (pathname: string, method: string) =>
-  PUBLIC_ROUTES.some(route => {
+  publicRoutes.some(route => {
     const matchPath =
       pathname === route.path ||
       pathname.startsWith(route.path + "/");
