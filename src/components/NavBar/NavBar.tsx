@@ -2,8 +2,7 @@
 
 import { usePathname, useRouter } from 'next/navigation';
 import styles from "./style.module.scss";
-import { useState } from 'react';
-import AdminModalUploader from '../../components/AdminModalUploader/AdminModalUploader';
+
 
 const NavBar = () => {
   const pathname = usePathname();
@@ -15,15 +14,12 @@ const NavBar = () => {
     router.push("/");
   };
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
   return (
     <>
       <nav>
         <ul className={styles.navBar}>
           {isDashboard ? (
             <>
-              <li><button onClick={() => setIsModalOpen(true)}> Ajouter un projet </button></li>
               <li><button onClick={handleLogout}>Déconnexion</button></li>
             </>
           ) : (
@@ -35,10 +31,6 @@ const NavBar = () => {
           )}
         </ul>
       </nav>
-
-      {isModalOpen && (
-        <AdminModalUploader onClose={() => setIsModalOpen(false)} />
-      )}
     </>
   );
 };

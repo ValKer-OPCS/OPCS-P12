@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import styles from "./style.module.scss";
+import type { Project } from "../../containers/DashboardProject/DashboardProject";
 
 const slugify = (text: string) =>
   text
@@ -13,9 +14,10 @@ const slugify = (text: string) =>
 
 interface AdminModalUploaderProps {
   onClose: () => void;
+  onCreated: (project: Project) => void;
 }
 
-const AdminModalUploader: React.FC<AdminModalUploaderProps> = ({ onClose }) => {
+const AdminModalUploader: React.FC<AdminModalUploaderProps> = ({ onClose, onCreated }) => {
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
   const [shortDescription, setShortDescription] = useState("");
@@ -52,7 +54,12 @@ const AdminModalUploader: React.FC<AdminModalUploaderProps> = ({ onClose }) => {
       })
     });
 
-    console.log(await res.json());
+    const data = await res.json();
+
+    if (data.success) {
+      onCreated(data.data);
+      onClose();
+    }
   };
 
   return (
@@ -60,9 +67,7 @@ const AdminModalUploader: React.FC<AdminModalUploaderProps> = ({ onClose }) => {
       <div className={styles.uploader} onClick={(e) => e.stopPropagation()} >
         <div className={styles.header}>
           <h2>Créer un projet</h2>
-          <button className={styles.closeBtn} onClick={onClose}>
-            ✕
-          </button>
+          <button className={styles.closeBtn} onClick={onClose}>✕</button>
         </div>
 
         <label>
@@ -71,7 +76,7 @@ const AdminModalUploader: React.FC<AdminModalUploaderProps> = ({ onClose }) => {
         </label>
 
         <label>
-          Slug (auto-généré, modifiable)
+          Slug
           <input type="text" value={slug} onChange={(e) => setSlug(slugify(e.target.value))} />
         </label>
 
@@ -86,7 +91,7 @@ const AdminModalUploader: React.FC<AdminModalUploaderProps> = ({ onClose }) => {
         </label>
 
         <label>
-          Technologies (séparées par des virgules)
+          Technologies
           <input type="text" onChange={(e) => setTechnologies(e.target.value.split(",").map((t) => t.trim()))} />
         </label>
 

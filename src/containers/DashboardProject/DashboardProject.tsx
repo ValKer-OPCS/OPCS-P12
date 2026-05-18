@@ -4,9 +4,10 @@ import { useEffect, useState } from "react";
 import AdminProjectCard from "../../components/AdminProjectCard/AdminProjectCard";
 import AdminModalDelete from "../../components/AdminModalDelete/AdminModalDelete";
 import AdminModalUpdater from "../../components/AdminModalUpdater/AdminModalUpdater";
+import AdminModalUploader from "../../components/AdminModalUploader/AdminModalUploader";
 import styles from "./style.module.scss";
 
-type Project = {
+export type Project = {
   _id: string;
   title: string;
   shortDescription: string;
@@ -31,6 +32,8 @@ export default function DashboardProject() {
 
   const [modalUpdateOpen, setModalUpdateOpen] = useState(false);
   const [projectToUpdate, setProjectToUpdate] = useState<Project | null>(null);
+
+  const [modalCreateOpen, setModalCreateOpen] = useState(false);
 
   useEffect(() => {
     const loadProjects = async () => {
@@ -110,6 +113,15 @@ export default function DashboardProject() {
 
   return (
     <>
+      <div className={styles.dashboardActions}>
+        <h1 className={styles.title}>Gestion des projets</h1>
+
+        <button className={styles.addBtn} onClick={() => setModalCreateOpen(true)}>
+          <span>+</span> Ajouter un projet
+        </button>
+      </div>
+
+
       <div className={styles.grid}>
         {projects.map((project) => (
           <AdminProjectCard key={project._id} _id={project._id} title={project.title} shortDescription={project.shortDescription}
@@ -126,6 +138,16 @@ export default function DashboardProject() {
               prev.map((p) => (p._id === updated._id ? updated : p))
             );
             setModalUpdateOpen(false);
+          }}
+        />
+      )}
+
+      {modalCreateOpen && (
+        <AdminModalUploader
+          onClose={() => setModalCreateOpen(false)}
+          onCreated={(newProject) => {
+            setProjects((prev) => [newProject, ...prev]);
+            setModalCreateOpen(false);
           }}
         />
       )}
