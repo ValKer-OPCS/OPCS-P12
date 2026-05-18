@@ -35,12 +35,10 @@ describe("Home page", () => {
   it("renders all main sections", () => {
     render(<Home />);
 
-    expect(screen.getByTestId("mock-header")).toBeInTheDocument();
     expect(screen.getByTestId("mock-about")).toBeInTheDocument();
     expect(screen.getByTestId("mock-hero-projects")).toBeInTheDocument();
     expect(screen.getByTestId("mock-projects")).toBeInTheDocument();
     expect(screen.getByTestId("mock-contact")).toBeInTheDocument();
-    expect(screen.getByTestId("mock-footer")).toBeInTheDocument();
   });
 
   it("renders the main container", () => {

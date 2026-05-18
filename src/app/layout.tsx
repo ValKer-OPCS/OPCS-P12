@@ -3,6 +3,8 @@ import { Montserrat } from "next/font/google";
 import "./globals.scss";
 import { ProjectModalProvider } from "@/context/ProjectModalContext";
 import ProjectModal from "@/components/ProjectModal/ProjectModal";
+import Header from "@/containers/Header/Header";
+import Footer from "@/containers/Footer/Footer";
 
 
 
@@ -71,10 +73,12 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${montserratMono.variable}`}>
       <body>
+        <Header />
         <ProjectModalProvider>
           {children}
           <ProjectModal />
         </ProjectModalProvider>
+        <Footer />
       </body>
     </html>
   );
