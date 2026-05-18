@@ -3,8 +3,8 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import AdminProjectUploader from '@/components/AdminModalUploader/AdminModalUploader'
-import AdminProjectUpdater from '@/components/AdminProjectUpdater/AdminProjectUpdater'
-import AdminProject from '@/containers/AdminProject/AdminProject'
+import AdminProjectUpdater from '@/components/AdminModalUpdater/AdminModalUpdater'
+import AdminProject from '@/containers/DashboardProject/DashboardProject'
 
 const DashboardPage = () => {
   const router = useRouter();

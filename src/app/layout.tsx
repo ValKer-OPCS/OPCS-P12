@@ -5,6 +5,7 @@ import { ProjectModalProvider } from "@/context/ProjectModalContext";
 import ProjectModal from "@/components/ProjectModal/ProjectModal";
 import Header from "@/containers/Header/Header";
 import Footer from "@/containers/Footer/Footer";
+import type { ReactNode } from "react";
 
 
 
@@ -65,21 +66,22 @@ export const metadata: Metadata = {
 };
 
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children, }: {children: ReactNode;}) {
   return (
     <html lang="en" className={`${montserratMono.variable}`}>
       <body>
-        <Header />
-        <ProjectModalProvider>
-          {children}
-          <ProjectModal />
-        </ProjectModalProvider>
-        <Footer />
+        <div className="app">
+          <Header />
+
+          <ProjectModalProvider>
+            {children}
+            <ProjectModal />
+          </ProjectModalProvider>
+
+          <Footer />
+        </div>
       </body>
     </html>
   );
 }
+
