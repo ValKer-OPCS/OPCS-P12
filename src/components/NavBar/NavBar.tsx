@@ -10,36 +10,36 @@ const NavBar = () => {
   const router = useRouter();
   const isDashboard = pathname.startsWith("/dashboard");
 
-    const handleLogout = () => {
+  const handleLogout = () => {
     localStorage.removeItem("token");
     router.push("/");
   };
 
-    const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
     <>
-    <nav>
-      <ul className={styles.navBar}>
-        {!isDashboard ? (
-          <>
-            <li><a href="#about">A propos</a></li>
-            <li><a href="#projects">Projets</a></li>
-            <li><a href="#contact">Contact</a></li>
-          </>
-        ) : (
-          <>
-            <li><button onClick={() => setIsModalOpen(true)}> Ajouter un projet </button></li>
-            <li><button onClick={handleLogout}>Déconnexion</button></li>
-          </>
-        )}
-      </ul>
-    </nav>
+      <nav>
+        <ul className={styles.navBar}>
+          {isDashboard ? (
+            <>
+              <li><button onClick={() => setIsModalOpen(true)}> Ajouter un projet </button></li>
+              <li><button onClick={handleLogout}>Déconnexion</button></li>
+            </>
+          ) : (
+            <>
+              <li><a href="#about">A propos</a></li>
+              <li><a href="#projects">Projets</a></li>
+              <li><a href="#contact">Contact</a></li>
+            </>
+          )}
+        </ul>
+      </nav>
 
-          {isModalOpen && (
+      {isModalOpen && (
         <AdminModalUploader onClose={() => setIsModalOpen(false)} />
       )}
-      </>
+    </>
   );
 };
 
