@@ -1,23 +1,26 @@
-.footerContainer{
+.footerContainer {
+  width: 100%;
+  background-color: #282c34;
+  height: 100px;
+  margin-top: auto;
+  color: white;
+  font-family: Montserrat;
+  align-content: center;
+  justify-items: center;
+  border-top: 1px solid #3e4451;
 
-    width: 100%;
-    background-color: #282c34;
-    height: 100px;
-    margin-top: auto;
-    color: white;
-    font-family: Montserrat;
-    align-content: center;
-    justify-items: center;
-    border-top: 1px solid #3e4451;
-
-     ul {
+  ul {
     display: flex;
     gap: 1rem;
     margin-top: 10px;
 
-    li {
+    li,
+    a {
       cursor: pointer;
       transition: opacity 0.2s;
+      color: white;
+      text-decoration: none;
+      font-family: inherit;
 
       &:hover {
         opacity: 0.6;
@@ -25,6 +28,7 @@
     }
   }
 }
+
 
 .overlay {
   position: fixed;

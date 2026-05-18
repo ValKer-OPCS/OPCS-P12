@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import Link from 'next/link'
 import styles from './style.module.scss'
 
 import footerPrivacy from "@/data/footerPrivacy.json"
@@ -39,6 +40,7 @@ const Footer = () => {
         <ul>
           <li onClick={() => openModal("privacy")}>Privacy</li>
           <li onClick={() => openModal("terms")}>Terms</li>
+          <li><Link href="/login">Login</Link></li>
         </ul>
       </footer>
 
