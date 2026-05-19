@@ -3,7 +3,31 @@ export const runtime = "nodejs";
 import { NextResponse } from "next/server";
 import { dbConnect } from "@/lib/db";
 import Project from "@/models/Project";
+import path from "path";
+import { unlink } from "fs/promises";
 
+
+
+const deleteImageAndResponsive = async (filename: string) => {
+  const uploadDir = path.join(process.cwd(), "public/uploads");
+
+
+  const originalPath = path.join(uploadDir, filename);
+  await unlink(originalPath).catch(() => {});
+
+
+  const base = filename.replace(".webp", "");
+  const responsiveFiles = [
+    `${base}-sm.webp`,
+    `${base}-md.webp`,
+    `${base}-lg.webp`
+  ];
+
+  for (const file of responsiveFiles) {
+    const filePath = path.join(uploadDir, file);
+    await unlink(filePath).catch(() => {});
+  }
+};
 
 export const GET = async (req: Request, context: { params: Promise<{ id: string }> }) => {
   const { id } = await context.params;
@@ -18,7 +42,6 @@ export const GET = async (req: Request, context: { params: Promise<{ id: string 
     return NextResponse.json({ success: false, message: "Erreur serveur" }, { status: 500 });
   }
 };
-
 
 export const PATCH = async (req: Request, context: { params: Promise<{ id: string }> }) => {
   const { id } = await context.params;
@@ -44,17 +67,34 @@ export const DELETE = async (req: Request, context: { params: Promise<{ id: stri
 
   try {
     await dbConnect();
-    const deleted = await Project.findByIdAndDelete(id);
+    const project = await Project.findById(id);
 
-    if (!deleted) {
+    if (!project) {
       return NextResponse.json(
         { success: false, message: "Projet introuvable" },
         { status: 404 }
       );
     }
 
+
+    if (project.thumbnail?.original) {
+      const filename = path.basename(project.thumbnail.original);
+      await deleteImageAndResponsive(filename);
+    }
+
+
+    if (Array.isArray(project.carouselImages)) {
+      for (const img of project.carouselImages) {
+        const filename = path.basename(img.original);
+        await deleteImageAndResponsive(filename);
+      }
+    }
+
+    await Project.findByIdAndDelete(id);
+
     return NextResponse.json({ success: true });
-  } catch {
+  } catch (error) {
+    console.error(error);
     return NextResponse.json(
       { success: false, message: "Erreur serveur" },
       { status: 500 }
