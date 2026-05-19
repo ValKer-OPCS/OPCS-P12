@@ -5,23 +5,10 @@ import AdminProjectCard from "../../components/AdminProjectCard/AdminProjectCard
 import AdminModalDelete from "../../components/AdminModalDelete/AdminModalDelete";
 import AdminModalUpdater from "../../components/AdminModalUpdater/AdminModalUpdater";
 import AdminModalUploader from "../../components/AdminModalUploader/AdminModalUploader";
+import AdminModalImages from "../../components/AdminModalImages/AdminModalImages";
 import styles from "./style.module.scss";
+import { Project } from "@/types/project";
 
-export type Project = {
-  _id: string;
-  title: string;
-  shortDescription: string;
-  longDescription?: string;
-  github?: string;
-  demo?: string;
-  date?: string;
-  technologies?: string[];
-  hero: boolean;
-  thumbnail: {
-    original: string;
-    responsive: { name: string; width: number; url: string }[];
-  };
-};
 
 export default function DashboardProject() {
   const [projects, setProjects] = useState<Project[]>([]);
@@ -34,6 +21,9 @@ export default function DashboardProject() {
   const [projectToUpdate, setProjectToUpdate] = useState<Project | null>(null);
 
   const [modalCreateOpen, setModalCreateOpen] = useState(false);
+
+  const [modalImagesOpen, setModalImagesOpen] = useState(false);
+  const [projectToEditImages, setProjectToEditImages] = useState<Project | null>(null);
 
   useEffect(() => {
     const loadProjects = async () => {
@@ -109,6 +99,20 @@ export default function DashboardProject() {
     setModalUpdateOpen(true);
   };
 
+  const openImagesModal = (id: string) => {
+    const project = projects.find((p) => p._id === id);
+    if (!project) return;
+
+    setProjectToEditImages(project);
+    setModalImagesOpen(true);
+  };
+
+  const handleImagesUpdated = (updated: Project) => {
+    setProjects((prev) =>
+      prev.map((p) => (p._id === updated._id ? updated : p))
+    );
+  };
+
   if (loading) return <p>Chargement…</p>;
 
   return (
@@ -121,11 +125,12 @@ export default function DashboardProject() {
         </button>
       </div>
 
-
       <div className={styles.grid}>
         {projects.map((project) => (
-          <AdminProjectCard key={project._id} _id={project._id} title={project.title} shortDescription={project.shortDescription}
-            thumbnail={project.thumbnail} hero={project.hero} onToggleHero={handleToggleHero} onDelete={queryDelete} onEdit={() => openUpdateModal(project)} />
+          <AdminProjectCard key={project._id} _id={project._id}
+            title={project.title} shortDescription={project.shortDescription} thumbnail={project.thumbnail} hero={project.hero}
+            onToggleHero={handleToggleHero} onDelete={queryDelete} onEdit={() => openUpdateModal(project)} onEditImages={openImagesModal}
+          />
         ))}
       </div>
 
@@ -143,13 +148,12 @@ export default function DashboardProject() {
       )}
 
       {modalCreateOpen && (
-        <AdminModalUploader
-          onClose={() => setModalCreateOpen(false)}
-          onCreated={(newProject) => {
-            setProjects((prev) => [newProject, ...prev]);
-            setModalCreateOpen(false);
-          }}
-        />
+        <AdminModalUploader onClose={() => setModalCreateOpen(false)} onCreated={(newProject) => {
+            setProjects((prev) => [newProject, ...prev]); setModalCreateOpen(false); }} />
+      )}
+
+      {modalImagesOpen && projectToEditImages && (
+        <AdminModalImages project={projectToEditImages} onClose={() => setModalImagesOpen(false)} onUpdated={handleImagesUpdated} />
       )}
     </>
   );
