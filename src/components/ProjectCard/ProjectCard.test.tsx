@@ -1,19 +1,18 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import ProjectCard from "./ProjectCard";
-import { Project } from "@/context/ProjectModalContext";
+import { Project } from "@/types/project";
 
-
-
-// --- Mock du contexte ---
-const openModalMock = jest.fn();
-jest.mock("@/context/ProjectModalContext", () => ({
+// Mock Next/Image propre, sans <img> et sans "any"
+jest.mock("next/image", () => ({
   __esModule: true,
-  useProjectModal: () => ({
-    openModal: openModalMock,
-  }),
+  default: (props: { src: string; alt: string }) => (
+    <div data-testid="mock-image" data-src={props.src} data-alt={props.alt} />
+  ),
 }));
 
 describe("ProjectCard", () => {
+  const openModalMock = jest.fn();
+
   const project: Project = {
     id: 1,
     slug: "my-project",
@@ -33,7 +32,7 @@ describe("ProjectCard", () => {
   });
 
   it("renders the project title, description and technologies", () => {
-    render(<ProjectCard project={project} />);
+    render(<ProjectCard project={project} openModal={openModalMock} />);
 
     expect(screen.getByText("My Project")).toBeInTheDocument();
     expect(screen.getByText("Short description")).toBeInTheDocument();
@@ -43,15 +42,15 @@ describe("ProjectCard", () => {
   });
 
   it("renders the thumbnail image", () => {
-    render(<ProjectCard project={project} />);
+    render(<ProjectCard project={project} openModal={openModalMock} />);
 
-    const img = screen.getByRole("img");
-    expect(img).toHaveAttribute("src", project.thumbnail);
-    expect(img).toHaveAttribute("alt", project.title);
+    const img = screen.getByTestId("mock-image");
+    expect(img).toHaveAttribute("data-src", project.thumbnail);
+    expect(img).toHaveAttribute("data-alt", project.title);
   });
 
   it("calls openModal when clicking the card", () => {
-    render(<ProjectCard project={project} />);
+    render(<ProjectCard project={project} openModal={openModalMock} />);
 
     const card = screen.getByRole("button");
     fireEvent.click(card);
@@ -61,7 +60,7 @@ describe("ProjectCard", () => {
   });
 
   it("renders GitHub and Demo links", () => {
-    render(<ProjectCard project={project} />);
+    render(<ProjectCard project={project} openModal={openModalMock} />);
 
     const githubLink = screen.getByRole("link", { name: /github/i });
     const demoLink = screen.getByRole("link", { name: /demo/i });
@@ -71,7 +70,7 @@ describe("ProjectCard", () => {
   });
 
   it("stops propagation when clicking GitHub or Demo links", () => {
-    render(<ProjectCard project={project} />);
+    render(<ProjectCard project={project} openModal={openModalMock} />);
 
     const githubLink = screen.getByRole("link", { name: /github/i });
     fireEvent.click(githubLink);
