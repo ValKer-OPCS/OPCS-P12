@@ -1,19 +1,17 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { render, screen, fireEvent } from "@testing-library/react";
 import Projects from "./Projects";
 import ProjectsList from "@/data/projects.json";
-
+import { Project } from "@/types/project";
 
 jest.mock("@/components/ProjectCard/ProjectCard", () => ({
   __esModule: true,
-  default: ({ project }: any) => (
+  default: ({ project }: { project: Project }) => (
     <div data-testid="mock-project-card">{project.title}</div>
   ),
 }));
 
 describe("Projects", () => {
-  const allProjects = ProjectsList.projects;
+  const allProjects: Project[] = ProjectsList.projects;
   const allTechnologies = Array.from(
     new Set(allProjects.flatMap((p) => p.technologies))
   );
