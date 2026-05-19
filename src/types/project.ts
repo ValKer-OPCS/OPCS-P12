@@ -1,5 +1,16 @@
+export type ResponsiveImage = {
+  name: string;
+  width: number;
+  url: string;
+};
+
+export type ImageSet = {
+  original: string;
+  responsive: ResponsiveImage[];
+};
+
 export interface Project {
-  id: number;
+  _id: string;
   title: string;
   slug: string;
   shortDescription: string;
@@ -7,7 +18,11 @@ export interface Project {
   technologies: string[];
   github?: string | null;
   demo?: string | null;
-  thumbnail: string;
-  carouselImages?: string[];
-  date: number;
+
+  thumbnail: ImageSet;
+
+  carouselImages: ImageSet[];
+
+  date: number | string | Date;
+  hero: boolean;
 }
