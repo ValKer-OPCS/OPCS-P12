@@ -23,10 +23,20 @@ type CardProjectProps = {
   onToggleHero: (id: string, currentHero: boolean) => void;
   onDelete: (id: string) => void;
   onEdit: (id: string) => void;
+  onEditImages: (id: string) => void;
 };
 
-const AdminProjectCard = ({ _id, title, shortDescription, thumbnail,
-                            hero, onToggleHero, onDelete, onEdit }: CardProjectProps) => {
+const AdminProjectCard = ({
+  _id,
+  title,
+  shortDescription,
+  thumbnail,
+  hero,
+  onToggleHero,
+  onDelete,
+  onEdit,
+  onEditImages
+}: CardProjectProps) => {
 
   const thumb = thumbnail?.responsive?.[0]?.url || thumbnail?.original;
 
@@ -50,6 +60,10 @@ const AdminProjectCard = ({ _id, title, shortDescription, thumbnail,
 
         <button className={styles.iconButton} onClick={() => onEdit(_id)}>
           ✎
+        </button>
+
+        <button className={styles.iconButton} onClick={() => onEditImages(_id)} >
+          🖼
         </button>
 
         <button className={styles.iconButton} onClick={() => onDelete(_id)}>
