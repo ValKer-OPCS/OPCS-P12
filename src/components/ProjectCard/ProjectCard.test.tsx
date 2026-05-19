@@ -2,7 +2,6 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import ProjectCard from "./ProjectCard";
 import { Project } from "@/types/project";
 
-// Mock Next/Image propre, sans <img> et sans "any"
 jest.mock("next/image", () => ({
   __esModule: true,
   default: (props: { src: string; alt: string }) => (

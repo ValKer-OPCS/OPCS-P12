@@ -1,27 +1,22 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import ProjectModal from "./ProjectModal";
-import { Project } from "@/context/ProjectModalContext";
+import { Project } from "@/types/project";
 
-// --- Mock Carousel ---
 jest.mock("../Carousel/Carousel", () => ({
   __esModule: true,
   default: () => <div data-testid="mock-carousel" />,
 }));
 
-// --- Mock du contexte ---
-const closeModalMock = jest.fn();
-
-let mockProject: Project | null = null;
-
-jest.mock("@/context/ProjectModalContext", () => ({
+jest.mock("next/image", () => ({
   __esModule: true,
-  useProjectModal: () => ({
-    project: mockProject,
-    closeModal: closeModalMock,
-  }),
+  default: (props: { src: string; alt: string }) => (
+    <div data-testid="mock-image" data-src={props.src} data-alt={props.alt} />
+  ),
 }));
 
 describe("ProjectModal", () => {
+  const onCloseMock = jest.fn();
+
   const project: Project = {
     id: 1,
     slug: "my-project",
@@ -37,18 +32,17 @@ describe("ProjectModal", () => {
   };
 
   beforeEach(() => {
-    closeModalMock.mockClear();
+    onCloseMock.mockClear();
   });
 
-  it("returns null when no project is selected", () => {
-    mockProject = null;
-    const { container } = render(<ProjectModal />);
+  it("returns null when no project is provided", () => {
+    const { container } = render(<ProjectModal project={null as unknown as Project} onClose={onCloseMock} />);
+
     expect(container.firstChild).toBeNull();
   });
 
   it("renders the modal when a project is provided", () => {
-    mockProject = project;
-    render(<ProjectModal />);
+    render(<ProjectModal project={project} onClose={onCloseMock} />);
 
     expect(screen.getByTestId("modal-overlay")).toBeInTheDocument();
     expect(screen.getByTestId("modal-content")).toBeInTheDocument();
@@ -57,41 +51,36 @@ describe("ProjectModal", () => {
   });
 
   it("renders the technologies list", () => {
-    mockProject = project;
-    render(<ProjectModal />);
+    render(<ProjectModal project={project} onClose={onCloseMock} />);
 
     expect(screen.getByText("React")).toBeInTheDocument();
     expect(screen.getByText("TypeScript")).toBeInTheDocument();
   });
 
   it("renders the Carousel", () => {
-    mockProject = project;
-    render(<ProjectModal />);
+    render(<ProjectModal project={project} onClose={onCloseMock} />);
 
     expect(screen.getByTestId("mock-carousel")).toBeInTheDocument();
   });
 
-  it("calls closeModal when clicking the overlay", () => {
-    mockProject = project;
-    render(<ProjectModal />);
+  it("calls onClose when clicking the overlay", () => {
+    render(<ProjectModal project={project} onClose={onCloseMock} />);
 
     fireEvent.click(screen.getByTestId("modal-overlay"));
-    expect(closeModalMock).toHaveBeenCalledTimes(1);
+    expect(onCloseMock).toHaveBeenCalledTimes(1);
   });
 
-  it("does NOT close the modal when clicking inside the modal content", () => {
-    mockProject = project;
-    render(<ProjectModal />);
+  it("does NOT close the modal when clicking inside modal content", () => {
+    render(<ProjectModal project={project} onClose={onCloseMock} />);
 
     fireEvent.click(screen.getByTestId("modal-content"));
-    expect(closeModalMock).not.toHaveBeenCalled();
+    expect(onCloseMock).not.toHaveBeenCalled();
   });
 
-  it("calls closeModal when clicking the close button", () => {
-    mockProject = project;
-    render(<ProjectModal />);
+  it("calls onClose when clicking the close button", () => {
+    render(<ProjectModal project={project} onClose={onCloseMock} />);
 
     fireEvent.click(screen.getByRole("button"));
-    expect(closeModalMock).toHaveBeenCalledTimes(1);
+    expect(onCloseMock).toHaveBeenCalledTimes(1);
   });
 });
