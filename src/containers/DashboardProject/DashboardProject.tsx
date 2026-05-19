@@ -9,7 +9,6 @@ import AdminModalImages from "../../components/AdminModalImages/AdminModalImages
 import styles from "./style.module.scss";
 import { Project } from "@/types/project";
 
-
 export default function DashboardProject() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
@@ -69,27 +68,8 @@ export default function DashboardProject() {
     setModalDeleteOpen(true);
   };
 
-  const confirmDelete = async () => {
-    if (!projectToDelete) return;
-
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) return console.error("JWT manquant");
-
-      await fetch(`/api/projects/${projectToDelete}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      setProjects((prev) =>
-        prev.filter((p) => p._id !== projectToDelete)
-      );
-    } catch (err) {
-      console.error("Erreur suppression", err);
-    }
-
+  const handleDeleteSuccess = (deletedId: string) => {
+    setProjects((prev) => prev.filter((p) => p._id !== deletedId));
     setModalDeleteOpen(false);
     setProjectToDelete(null);
   };
@@ -134,8 +114,7 @@ export default function DashboardProject() {
         ))}
       </div>
 
-      <AdminModalDelete open={modalDeleteOpen} title="Supprimer ce projet ?" message="Cette action est irréversible."
-                        onCancel={() => setModalDeleteOpen(false)} onConfirm={confirmDelete} />
+      <AdminModalDelete open={modalDeleteOpen} projectId={projectToDelete} onCancel={() => setModalDeleteOpen(false)} onSuccess={handleDeleteSuccess}/>
 
       {modalUpdateOpen && projectToUpdate && (
         <AdminModalUpdater project={projectToUpdate} onClose={() => setModalUpdateOpen(false)} onUpdated={(updated) => {
