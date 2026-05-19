@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
-
 import { render, screen } from "@testing-library/react";
 import RootLayout from "./layout";
 
@@ -10,17 +7,14 @@ jest.mock("next/font/google", () => ({
   }),
 }));
 
-jest.mock("@/context/ProjectModalContext", () => ({
+jest.mock("@/containers/Header/Header", () => ({
   __esModule: true,
-  ProjectModalProvider: ({ children }: any) => (
-    <div data-testid="mock-provider">{children}</div>
-  ),
+  default: () => <header data-testid="mock-header" />,
 }));
 
-
-jest.mock("@/components/ProjectModal/ProjectModal", () => ({
+jest.mock("@/containers/Footer/Footer", () => ({
   __esModule: true,
-  default: () => <div data-testid="mock-project-modal" />,
+  default: () => <footer data-testid="mock-footer" />,
 }));
 
 describe("RootLayout", () => {
@@ -46,27 +40,27 @@ describe("RootLayout", () => {
     expect(html?.className).toContain("--mock-font");
   });
 
-  it("renders the ProjectModalProvider", () => {
+  it("renders the Header", () => {
     render(
       <RootLayout>
         <div data-testid="child">Hello</div>
       </RootLayout>
     );
 
-    expect(screen.getByTestId("mock-provider")).toBeInTheDocument();
+    expect(screen.getByTestId("mock-header")).toBeInTheDocument();
   });
 
-  it("renders the ProjectModal inside the provider", () => {
+  it("renders the Footer", () => {
     render(
       <RootLayout>
         <div data-testid="child">Hello</div>
       </RootLayout>
     );
 
-    expect(screen.getByTestId("mock-project-modal")).toBeInTheDocument();
+    expect(screen.getByTestId("mock-footer")).toBeInTheDocument();
   });
 
-  it("renders children inside the provider", () => {
+  it("renders children inside the layout", () => {
     render(
       <RootLayout>
         <div data-testid="child">Hello</div>

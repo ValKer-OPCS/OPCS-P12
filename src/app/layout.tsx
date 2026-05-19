@@ -1,20 +1,14 @@
 import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
 import "./globals.scss";
-import { ProjectModalProvider } from "@/context/ProjectModalContext";
-import ProjectModal from "@/components/ProjectModal/ProjectModal";
 import Header from "@/containers/Header/Header";
 import Footer from "@/containers/Footer/Footer";
 import type { ReactNode } from "react";
 
-
-
 const montserratMono = Montserrat({
   variable: "--font-montserrat-mono",
   subsets: ["latin"],
-})
-
-
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://ValKer.dev"),
@@ -65,23 +59,16 @@ export const metadata: Metadata = {
   },
 };
 
-
-export default function RootLayout({ children, }: {children: ReactNode;}) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" className={`${montserratMono.variable}`}>
+    <html lang="en" className={montserratMono.variable}>
       <body>
         <div className="app">
           <Header />
-
-          <ProjectModalProvider>
-            {children}
-            <ProjectModal />
-          </ProjectModalProvider>
-
+          {children}
           <Footer />
         </div>
       </body>
     </html>
   );
 }
-
