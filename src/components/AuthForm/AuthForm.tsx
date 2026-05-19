@@ -57,17 +57,17 @@ export default function LoginForm() {
         <div className={styles.field}>
           <label className={styles.label}>
             Nom d&apos;utilisateur
+            <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} required className={styles.input} />
           </label>
 
-          <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} required className={styles.input} />
         </div>
 
         <div className={styles.field}>
           <label className={styles.label}>
             Mot de passe
+            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required className={styles.input} />
           </label>
 
-          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required className={styles.input} />
         </div>
 
         {error && (
