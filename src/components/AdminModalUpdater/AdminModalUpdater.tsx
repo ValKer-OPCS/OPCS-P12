@@ -2,22 +2,9 @@
 
 import { useState } from "react";
 import styles from "./style.module.scss";
+import { Project } from "@/types/project";
 
-export type Project = {
-  _id: string;
-  title: string;
-  shortDescription: string;
-  longDescription?: string;
-  github?: string;
-  demo?: string;
-  date?: string;
-  hero: boolean;
-  technologies?: string[];
-  thumbnail: {
-    original: string;
-    responsive: { name: string; width: number; url: string }[];
-  };
-};
+
 
 interface AdminModalUpdaterProps {
   project: Project | null;
@@ -33,7 +20,7 @@ const AdminModalUpdater = ({ project, onClose, onUpdated }: AdminModalUpdaterPro
     longDescription: project?.longDescription ?? "",
     github: project?.github ?? "",
     demo: project?.demo ?? "",
-    date: project?.date ? project.date.substring(0, 10) : "",
+    date: project?.date ? String(project.date).substring(0, 10) : "",
     hero: project?.hero ?? false,
     technologies: project?.technologies?.join(", ") ?? "",
   }));

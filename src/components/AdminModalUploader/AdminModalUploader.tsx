@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import styles from "./style.module.scss";
-import type { Project } from "../../containers/DashboardProject/DashboardProject";
+import { Project } from "@/types/project";
 
 const slugify = (text: string) =>
   text
