@@ -1,81 +1,77 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import HeroCard from "./HeroCard";
-import { Project } from "@/context/ProjectModalContext";
-
+import { Project } from "@/types/project";
 
 jest.mock("../Carousel/Carousel", () => ({
   __esModule: true,
   default: () => <div data-testid="carousel" />,
 }));
 
-const openModalMock = jest.fn();
-jest.mock("@/context/ProjectModalContext", () => ({
-    useProjectModal: () => ({
-        openModal: openModalMock,
-    }),
-}));
-
 describe("HeroCard", () => {
-    const project: Project = {
-        id: 1,
-        slug: "my-project",
-        title: "My Project",
-        shortDescription: "Short description",
-        longDescription: "A long description of the project",
-        thumbnail: "/thumb.webp",
-        carouselImages: ["/img1.jpg", "/img2.jpg"],
-        technologies: ["React", "TypeScript", "Next.js"],
-        github: "https://github.com/example",
-        demo: "https://example.com",
-        date: 2026,
-    };
+  const openModalMock = jest.fn();
 
-    beforeEach(() => {
-        openModalMock.mockClear();
-    });
+  const project: Project = {
+    id: 1,
+    slug: "my-project",
+    title: "My Project",
+    shortDescription: "Short description",
+    longDescription: "A long description of the project",
+    thumbnail: "/thumb.webp",
+    carouselImages: ["/img1.jpg", "/img2.jpg"],
+    technologies: ["React", "TypeScript", "Next.js"],
+    github: "https://github.com/example",
+    demo: "https://example.com",
+    date: 2026,
+  };
 
-    it("renders the project title, description and technologies", () => {
-        render(<HeroCard project={project} />);
+  beforeEach(() => {
+    openModalMock.mockClear();
+  });
 
-        expect(screen.getByText("My Project")).toBeInTheDocument();
-        expect(screen.getByText("A long description of the project")).toBeInTheDocument();
+  it("renders the project title, description and technologies", () => {
+    render(<HeroCard project={project} openModal={openModalMock} />);
 
-        expect(screen.getByText("React")).toBeInTheDocument();
-        expect(screen.getByText("TypeScript")).toBeInTheDocument();
-        expect(screen.getByText("Next.js")).toBeInTheDocument();
-    });
+    expect(screen.getByText("My Project")).toBeInTheDocument();
+    expect(
+      screen.getByText("A long description of the project")
+    ).toBeInTheDocument();
 
-    it("renders the Carousel", () => {
-        render(<HeroCard project={project} />);
-        expect(screen.getByTestId("carousel")).toBeInTheDocument();
-    });
+    expect(screen.getByText("React")).toBeInTheDocument();
+    expect(screen.getByText("TypeScript")).toBeInTheDocument();
+    expect(screen.getByText("Next.js")).toBeInTheDocument();
+  });
 
-    it("calls openModal when clicking the card", () => {
-        render(<HeroCard project={project} />);
+  it("renders the Carousel", () => {
+    render(<HeroCard project={project} openModal={openModalMock} />);
+    expect(screen.getByTestId("carousel")).toBeInTheDocument();
+  });
 
-        const card = screen.getByRole("button");
-        fireEvent.click(card);
+  it("calls openModal when clicking the card", () => {
+    render(<HeroCard project={project} openModal={openModalMock} />);
 
-        expect(openModalMock).toHaveBeenCalledTimes(1);
-        expect(openModalMock).toHaveBeenCalledWith(project);
-    });
+    const card = screen.getByRole("button");
+    fireEvent.click(card);
 
-    it("renders GitHub and Demo links", () => {
-        render(<HeroCard project={project} />);
+    expect(openModalMock).toHaveBeenCalledTimes(1);
+    expect(openModalMock).toHaveBeenCalledWith(project);
+  });
 
-        const githubLink = screen.getByRole("link", { name: /github/i });
-        const demoLink = screen.getByRole("link", { name: /demo/i });
+  it("renders GitHub and Demo links", () => {
+    render(<HeroCard project={project} openModal={openModalMock} />);
 
-        expect(githubLink).toHaveAttribute("href", project.github);
-        expect(demoLink).toHaveAttribute("href", project.demo);
-    });
+    const githubLink = screen.getByRole("link", { name: /github/i });
+    const demoLink = screen.getByRole("link", { name: /demo/i });
 
-    it("stops propagation when clicking GitHub or Demo links", () => {
-        render(<HeroCard project={project} />);
+    expect(githubLink).toHaveAttribute("href", project.github);
+    expect(demoLink).toHaveAttribute("href", project.demo);
+  });
 
-        const githubLink = screen.getByRole("link", { name: /github/i });
-        fireEvent.click(githubLink);
+  it("stops propagation when clicking GitHub or Demo links", () => {
+    render(<HeroCard project={project} openModal={openModalMock} />);
 
-        expect(openModalMock).not.toHaveBeenCalled();
-    });
+    const githubLink = screen.getByRole("link", { name: /github/i });
+    fireEvent.click(githubLink);
+
+    expect(openModalMock).not.toHaveBeenCalled();
+  });
 });
