@@ -2,6 +2,9 @@
 
 import Image from "next/image";
 import styles from "./style.module.scss";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faStar, faPen, faImages, faTrash } from "@fortawesome/free-solid-svg-icons";
+
 
 type ResponsiveImage = {
   name: string;
@@ -54,20 +57,20 @@ const AdminProjectCard = ({
       </div>
 
       <div className={styles.actions}>
-        <button className={`${styles.iconButton} ${hero ? styles.active : ""}`} onClick={() => onToggleHero(_id, hero)}>
-          ★
+        <button className={`${styles.iconButton} ${hero ? styles.active : ""}`} onClick={() => onToggleHero(_id, hero)} >
+          <FontAwesomeIcon icon={faStar} />
         </button>
 
         <button className={styles.iconButton} onClick={() => onEdit(_id)}>
-          ✎
+          <FontAwesomeIcon icon={faPen} />
         </button>
 
-        <button className={styles.iconButton} onClick={() => onEditImages(_id)} >
-          🖼
+        <button className={styles.iconButton} onClick={() => onEditImages(_id)}>
+          <FontAwesomeIcon icon={faImages} />
         </button>
 
         <button className={styles.iconButton} onClick={() => onDelete(_id)}>
-          🗑
+          <FontAwesomeIcon icon={faTrash} />
         </button>
       </div>
     </div>
