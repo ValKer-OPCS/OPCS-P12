@@ -7,7 +7,7 @@ import styles from "./style.module.scss";
 import { Project } from "@/types/project";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faTrash , faTimes } from "@fortawesome/free-solid-svg-icons";
 
 type ResponsiveImage = {
   name: string;
@@ -123,6 +123,9 @@ const AdminProjectImagesModal = ({ project, onClose, onUpdated }: Props) => {
   return (
     <div className={styles.overlay}>
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+        <button className={styles.closeButton} onClick={onClose} disabled={loading}>
+            <FontAwesomeIcon icon={faTimes} />
+          </button>
         <h2>Modifier les images</h2>
 
 
@@ -166,9 +169,6 @@ const AdminProjectImagesModal = ({ project, onClose, onUpdated }: Props) => {
         </div>
 
         <div className={styles.actions}>
-          <button className={styles.save} onClick={onClose} disabled={loading}>
-            Fermer
-          </button>
         </div>
       </div>
     </div>

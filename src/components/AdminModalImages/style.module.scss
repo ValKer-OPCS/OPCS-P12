@@ -20,6 +20,7 @@
     opacity: 0;
     transform: scale(0.92);
   }
+
   to {
     opacity: 1;
     transform: scale(1);
@@ -84,7 +85,7 @@
     padding: 0.5rem 0;
     font-size: 0.95rem;
     cursor: pointer;
-      font-family: Montserrat;
+    font-family: Montserrat;
   }
 }
 
@@ -163,12 +164,26 @@
     }
   }
 
-  .save {
-    background: #0070f3;
-    color: #fff;
+}
 
-    &:hover {
-      background: #005fcc;
-    }
+.closeButton {
+  margin-top: 0.5rem;
+  padding: 0.8rem 1rem;
+  background: #0070f3;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  position: absolute;
+  top: 12px;
+  right: 12px;
+
+
+  &:hover {
+    background: #005fcc;
+    color: #fff;
   }
 }
