@@ -19,9 +19,9 @@ export interface Project {
   github?: string | null;
   demo?: string | null;
 
-  thumbnail: ImageSet;
+  thumbnail: ImageSet| null;
 
-  carouselImages: ImageSet[];
+  carouselImages: ImageSet[] | null;
 
   date: number | string | Date;
   hero: boolean;
