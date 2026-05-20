@@ -13,17 +13,33 @@ describe("ProjectCard", () => {
   const openModalMock = jest.fn();
 
   const project: Project = {
-    id: 1,
+    _id: "1",
     slug: "my-project",
     title: "My Project",
     shortDescription: "Short description",
     longDescription: "Long description",
-    thumbnail: "/thumb.webp",
-    carouselImages: ["/img1.jpg"],
     technologies: ["React", "TypeScript"],
     github: "https://github.com/example",
     demo: "https://example.com",
+
+    thumbnail: {
+      original: "/thumb.webp",
+      responsive: [
+        { name: "small", width: 400, url: "/thumb-small.webp" },
+      ],
+    },
+
+    carouselImages: [
+      {
+        original: "/img1.jpg",
+        responsive: [
+          { name: "small", width: 400, url: "/img1-small.jpg" },
+        ],
+      },
+    ],
+
     date: 2024,
+    hero: false,
   };
 
   beforeEach(() => {
@@ -40,11 +56,11 @@ describe("ProjectCard", () => {
     expect(screen.getByText("TypeScript")).toBeInTheDocument();
   });
 
-  it("renders the thumbnail image", () => {
+  it("renders the thumbnail image using ImageSet.original", () => {
     render(<ProjectCard project={project} openModal={openModalMock} />);
 
     const img = screen.getByTestId("mock-image");
-    expect(img).toHaveAttribute("data-src", project.thumbnail);
+    expect(img).toHaveAttribute("data-src", project.thumbnail?.responsive[0].url);
     expect(img).toHaveAttribute("data-alt", project.title);
   });
 
@@ -58,17 +74,17 @@ describe("ProjectCard", () => {
     expect(openModalMock).toHaveBeenCalledWith(project);
   });
 
-  it("renders GitHub and Demo links", () => {
+  it("renders GitHub and Demo links when provided", () => {
     render(<ProjectCard project={project} openModal={openModalMock} />);
 
     const githubLink = screen.getByRole("link", { name: /github/i });
     const demoLink = screen.getByRole("link", { name: /demo/i });
 
-    expect(githubLink).toHaveAttribute("href", project.github);
-    expect(demoLink).toHaveAttribute("href", project.demo);
+    expect(githubLink).toHaveAttribute("href", project.github!);
+    expect(demoLink).toHaveAttribute("href", project.demo!);
   });
 
-  it("stops propagation when clicking GitHub or Demo links", () => {
+  it("does not call openModal when clicking GitHub or Demo links", () => {
     render(<ProjectCard project={project} openModal={openModalMock} />);
 
     const githubLink = screen.getByRole("link", { name: /github/i });

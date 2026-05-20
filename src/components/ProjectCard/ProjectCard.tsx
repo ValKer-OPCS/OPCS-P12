@@ -9,11 +9,16 @@ interface ProjectCardProps {
   openModal: (project: Project) => void;
 }
 
+
+
 const ProjectCard = ({ project, openModal }: ProjectCardProps) => {
+
+  const thumbnail = project.thumbnail?.responsive?.[0]?.url || project.thumbnail?.original || "/placeholder.webp";
+
   return (
     <article data-testid="project-card" className={styles.card} onClick={() => openModal(project)} role="button" tabIndex={0} >
       <div className={styles.imageWrapper}>
-        <Image src={project.thumbnail} alt={project.title} fill className={styles.image} />
+        <Image src={thumbnail} alt={project.title} fill className={styles.image} />
       </div>
 
       <h3 className={styles.title}>{project.title}</h3>
