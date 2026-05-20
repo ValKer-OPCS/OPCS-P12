@@ -3,6 +3,9 @@
 import { useState } from "react";
 import styles from "./style.module.scss";
 import { Project } from "@/types/project";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTimes } from "@fortawesome/free-solid-svg-icons";
+
 
 
 
@@ -112,8 +115,13 @@ const AdminModalUpdater = ({ project, onClose, onUpdated }: AdminModalUpdaterPro
   };
 
   return (
-    <div className={styles.overlay} onClick={onClose}>
+    <div className={styles.overlay}>
       <form className={styles.updateForm} onClick={(e) => e.stopPropagation()} onSubmit={handleUpdate} >
+
+        <button type="button" className={styles.closeButton} onClick={onClose}>
+    <FontAwesomeIcon icon={faTimes} />
+  </button>
+  
         <h2>Modifier un projet</h2>
 
         <label>
