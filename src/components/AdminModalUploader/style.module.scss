@@ -51,8 +51,19 @@
       }
     }
 
-    input[type="file"] {
-      margin-top: 0.4rem;
+    input[type="date"] {
+      padding: 0.6rem 0.8rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      background: white;
+      transition: border-color 0.2s ease;
+      font-family: Montserrat;
+
+        &:focus {
+          border-color: #0070f3;
+          outline: none;
+        }
     }
 
     textarea {
