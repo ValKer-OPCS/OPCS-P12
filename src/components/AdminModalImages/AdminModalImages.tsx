@@ -6,6 +6,9 @@ import styles from "./style.module.scss";
 
 import { Project } from "@/types/project";
 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
+
 type ResponsiveImage = {
   name: string;
   width: number;
@@ -118,7 +121,7 @@ const AdminProjectImagesModal = ({ project, onClose, onUpdated }: Props) => {
   };
 
   return (
-    <div className={styles.overlay} onClick={onClose}>
+    <div className={styles.overlay}>
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
         <h2>Modifier les images</h2>
 
@@ -130,7 +133,7 @@ const AdminProjectImagesModal = ({ project, onClose, onUpdated }: Props) => {
             <Image src={thumbnail.original} alt="thumbnail" width={300} height={200} className={styles.preview}/>
 
             <button className={styles.deleteIcon} onClick={deleteThumbnail} >
-              🗑
+              <FontAwesomeIcon icon={faTrash} />
             </button>
           </div>
         ) : (
@@ -151,7 +154,7 @@ const AdminProjectImagesModal = ({ project, onClose, onUpdated }: Props) => {
                 <Image src={img.original} alt={`carousel-${i}`} width={200} height={200} className={styles.carouselImage} />
 
                 <button className={styles.deleteIcon} onClick={() => deleteCarouselImage(img.original)} >
-                  🗑
+                  <FontAwesomeIcon icon={faTrash} />
                 </button>
               </div>
             </div>
