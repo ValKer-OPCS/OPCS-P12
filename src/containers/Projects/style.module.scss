@@ -1,6 +1,7 @@
 .projectsContainerTitle{
 
   justify-self: center;
+  margin: 50px auto 0px auto;
   margin-top: 50px;
   color: white;
   font-family: Montserrat;
@@ -9,8 +10,7 @@
 }
 
 .projectsContainer{
-  margin-top: 50px;
-  margin-bottom: 50px; // a enlever quand form de contact
+  margin-bottom: 50px;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
@@ -21,9 +21,10 @@
 .filters {
   display: flex;
   gap: 1rem;
-  margin-bottom: 2rem;
+  margin-bottom: 25px;
   justify-content: center;
   margin-top: 25px;
+  flex-wrap: wrap;
 
   button {
     padding: 0.5rem 1rem;
@@ -39,4 +40,11 @@
       color: white;
     }
   }
+}
+
+.projectSection{
+
+
+     display: flex;
+     flex-direction: column;
 }

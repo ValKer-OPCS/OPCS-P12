@@ -26,7 +26,7 @@ const Projects = () => {
   const closeModal = () => setSelectedProject(null);
 
   return (
-    <section data-testid="projects-section" id="projects" className={styles.section}>
+    <section data-testid="projects-section" id="projects" className={styles.projectSection}>
       <h2 className={styles.projectsContainerTitle}>Projects</h2>
 
       <div className={styles.filters}>

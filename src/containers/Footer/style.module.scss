@@ -2,17 +2,21 @@
   width: 100%;
   background-color: #282c34;
   height: 100px;
-  margin-top: auto;
   color: white;
   font-family: Montserrat;
   align-content: center;
   justify-items: center;
   border-top: 1px solid #3e4451;
+  text-align: center;
+
+  p {
+    margin-bottom: 10px;
+  }
 
   ul {
     display: flex;
-    gap: 1rem;
-    margin-top: 10px;
+    gap: 8px;
+    justify-content: center;
 
     li,
     a {
@@ -48,7 +52,7 @@
   width: 90%;
   position: relative;
 
-  p{
+  p {
 
     margin-bottom: 10px;
     font-family: Montserrat;

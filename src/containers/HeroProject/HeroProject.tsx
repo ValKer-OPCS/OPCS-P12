@@ -16,7 +16,7 @@ const HeroProjects = () => {
   const closeModal = () => setSelectedProject(null);
 
   return (
-    <section data-testid="hero-projects" id="heroProjects" className={styles.section}>
+    <section data-testid="hero-projects" id="heroProjects" className={styles.heroSection}>
       <h2 className={styles.projectsContainerTitle}>Projets mis en avant</h2>
 
       <div className={styles.projectsContainer}>

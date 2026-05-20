@@ -1,7 +1,7 @@
 .projectsContainerTitle{
 
   justify-self: center;
-  margin-top: 50px;
+  margin: 50px auto 0px auto;
   color: white;
   font-family: Montserrat;
   font-size: 35px;
@@ -9,7 +9,7 @@
 }
 
 .projectsContainer{
-  margin-top: 50px;
+  margin-top: 25px;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
@@ -17,25 +17,9 @@
   justify-content: center;
 }
 
-.filters {
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 2rem;
-  justify-content: center;
-  margin-top: 25px;
+.heroSection{
 
-  button {
-    padding: 0.5rem 1rem;
-    border-radius: 6px;
-    border: 1px solid #3e4451;
-    background: transparent;
-    cursor: pointer;
-    transition: 0.2s;
-    color: white;
-
-    &.active {
-      background: #3e4451;
-      color: white;
-    }
-  }
+     margin: 50px auto 0px auto;
+     display: flex;
+     flex-direction: column;
 }

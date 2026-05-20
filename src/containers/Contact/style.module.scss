@@ -1,17 +1,18 @@
 .contactContainer {
 
   margin-bottom: 50px;
-
+  display: flex;
+  flex-direction: column;
 }
 
 
 .contactContainerTitle {
-
+  margin: 0px auto 0px auto;
   justify-self: center;
-  margin-top: 50px;
   color: white;
   font-family: Montserrat;
   font-size: 35px;
-  margin-bottom: 50px;
+  margin-bottom: 25px;
+
 
 }
