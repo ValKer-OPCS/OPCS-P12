@@ -3,7 +3,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #111;
+  background-color: #1e1e1e;;
 }
 
 .form {
@@ -13,6 +13,7 @@
   padding: 32px;
   border-radius: 16px;
   border: 1px solid #2a2a2a;
+  font-family: Montserrat;
 }
 
 .title {
@@ -42,6 +43,7 @@
   font-size: 16px;
   outline: none;
   box-sizing: border-box;
+  margin-top: 8px;
 
   &:focus {
     border-color: #666;

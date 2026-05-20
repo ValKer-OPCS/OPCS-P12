@@ -38,7 +38,7 @@ const AdminProjectCard = ({
   onEditImages
 }: CardProjectProps) => {
 
-  const thumb = thumbnail?.responsive?.[0]?.url || thumbnail?.original;
+  const thumb = thumbnail?.responsive?.[0]?.url || thumbnail?.original || "/placeholder.webp";
 
   return (
     <div className={styles.card}>
