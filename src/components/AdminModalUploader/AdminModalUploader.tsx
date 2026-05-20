@@ -3,6 +3,8 @@
 import React, { useState } from "react";
 import styles from "./style.module.scss";
 import { Project } from "@/types/project";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTimes } from "@fortawesome/free-solid-svg-icons";
 
 const slugify = (text: string) =>
   text
@@ -32,7 +34,9 @@ const AdminModalUploader: React.FC<AdminModalUploaderProps> = ({ onClose, onCrea
     setSlug(slugify(value));
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e: React.SubmitEvent) => {
+    e.preventDefault();
+
     const token = localStorage.getItem("token");
     if (!token) return console.error("Token manquant");
 
@@ -64,55 +68,59 @@ const AdminModalUploader: React.FC<AdminModalUploaderProps> = ({ onClose, onCrea
 
   return (
     <div className={styles.overlay} onClick={onClose}>
-      <div className={styles.uploader} onClick={(e) => e.stopPropagation()} >
+      <div className={styles.uploader} onClick={(e) => e.stopPropagation()}>
         <div className={styles.header}>
           <h2>Créer un projet</h2>
-          <button className={styles.closeBtn} onClick={onClose}>✕</button>
+          <button className={styles.closeBtn} onClick={onClose}>
+            <FontAwesomeIcon icon={faTimes} />
+          </button>
         </div>
 
-        <label>
-          Titre du projet
-          <input type="text" value={title} onChange={(e) => handleTitleChange(e.target.value)} />
-        </label>
+        <form onSubmit={handleSubmit} className={styles.form}>
+          <label>
+            Titre du projet
+            <input required type="text" value={title} onChange={(e) => handleTitleChange(e.target.value)} />
+          </label>
 
-        <label>
-          Slug
-          <input type="text" value={slug} onChange={(e) => setSlug(slugify(e.target.value))} />
-        </label>
+          <label>
+            Slug
+            <input required type="text" value={slug} onChange={(e) => setSlug(slugify(e.target.value))} />
+          </label>
 
-        <label>
-          Courte description
-          <textarea value={shortDescription} onChange={(e) => setShortDescription(e.target.value)} />
-        </label>
+          <label>
+            Courte description
+            <textarea required value={shortDescription} onChange={(e) => setShortDescription(e.target.value)} />
+          </label>
 
-        <label>
-          Longue description
-          <textarea value={longDescription} onChange={(e) => setLongDescription(e.target.value)} />
-        </label>
+          <label>
+            Longue description
+            <textarea required value={longDescription} onChange={(e) => setLongDescription(e.target.value)} />
+          </label>
 
-        <label>
-          Technologies
-          <input type="text" onChange={(e) => setTechnologies(e.target.value.split(",").map((t) => t.trim()))} />
-        </label>
+          <label>
+            Technologies (séparées par des virgules)
+            <input type="text" onChange={(e) => setTechnologies(e.target.value.split(",").map((t) => t.trim())) }/>
+          </label>
 
-        <label>
-          Lien GitHub
-          <input type="text" value={github} onChange={(e) => setGithub(e.target.value)} />
-        </label>
+          <label>
+            Lien GitHub
+            <input type="text" value={github} onChange={(e) => setGithub(e.target.value)} />
+          </label>
 
-        <label>
-          Lien de démo
-          <input type="text" value={demo} onChange={(e) => setDemo(e.target.value)} />
-        </label>
+          <label>
+            Lien de démo
+            <input type="text" value={demo} onChange={(e) => setDemo(e.target.value)} />
+          </label>
 
-        <label>
-          Date du projet
-          <input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
-        </label>
+          <label>
+            Date du projet
+            <input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+          </label>
 
-        <button className={styles.uploadBtn} onClick={handleSubmit}>
-          Enregistrer le projet
-        </button>
+          <button type="submit" className={styles.uploadBtn}>
+            Enregistrer le projet
+          </button>
+        </form>
       </div>
     </div>
   );
