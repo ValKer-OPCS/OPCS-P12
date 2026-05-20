@@ -59,7 +59,7 @@
       padding: 0.7rem 1rem;
       border-radius: 6px;
       border: 1px solid #ddd;
-      background: #fafafa;
+      background: #fff;
       color: #000;
       font-size: 0.95rem;
       transition: border-color 0.2s ease;
@@ -139,7 +139,4 @@
   color: #666;
   transition: color 0.2s ease;
 
-  &:hover {
-    color: #000;
-  }
 }
