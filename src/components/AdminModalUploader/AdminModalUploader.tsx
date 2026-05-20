@@ -67,7 +67,7 @@ const AdminModalUploader: React.FC<AdminModalUploaderProps> = ({ onClose, onCrea
   };
 
   return (
-    <div className={styles.overlay} onClick={onClose}>
+    <div className={styles.overlay}>
       <div className={styles.uploader} onClick={(e) => e.stopPropagation()}>
         <div className={styles.header}>
           <h2>Créer un projet</h2>
