@@ -18,18 +18,29 @@ describe("ProjectModal", () => {
   const onCloseMock = jest.fn();
 
   const project: Project = {
-    id: 1,
     slug: "my-project",
     title: "My Project",
     shortDescription: "Short description",
-    longDescription: "Long description",
-    thumbnail: "/thumb.webp",
-    carouselImages: ["/img1.jpg"],
-    technologies: ["React", "TypeScript"],
+    longDescription: "A long description of the project",
+
+    thumbnail: {
+      original: "/thumb.webp",
+      responsive: [],
+    },
+
+    carouselImages: [
+      { original: "/img1.jpg", responsive: [] },
+      { original: "/img2.jpg", responsive: [] },
+    ],
+
+    technologies: ["React", "TypeScript", "Next.js"],
     github: "https://github.com/example",
     demo: "https://example.com",
-    date: 20240612,
+    date: 2026,
+    _id: "",
+    hero: false
   };
+
 
   beforeEach(() => {
     onCloseMock.mockClear();
@@ -47,7 +58,7 @@ describe("ProjectModal", () => {
     expect(screen.getByTestId("modal-overlay")).toBeInTheDocument();
     expect(screen.getByTestId("modal-content")).toBeInTheDocument();
     expect(screen.getByText("My Project")).toBeInTheDocument();
-    expect(screen.getByText("Long description")).toBeInTheDocument();
+    expect(screen.getByText("A long description of the project")).toBeInTheDocument();
   });
 
   it("renders the technologies list", () => {

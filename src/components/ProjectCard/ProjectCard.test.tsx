@@ -60,7 +60,10 @@ describe("ProjectCard", () => {
     render(<ProjectCard project={project} openModal={openModalMock} />);
 
     const img = screen.getByTestId("mock-image");
-    expect(img).toHaveAttribute("data-src", project.thumbnail?.responsive[0].url);
+    const expectedSrc = project.thumbnail?.responsive?.[0]?.url ?? null;
+
+    expect(img).toHaveAttribute("data-src", expectedSrc);
+
     expect(img).toHaveAttribute("data-alt", project.title);
   });
 

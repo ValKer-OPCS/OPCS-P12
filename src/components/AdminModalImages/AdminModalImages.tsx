@@ -17,12 +17,12 @@ type ResponsiveImage = {
 
 type Thumbnail = {
   original: string;
-  responsive: ResponsiveImage[];
+  responsive?: ResponsiveImage[];
 } | null;
 
 type CarouselImage = {
   original: string;
-  responsive: ResponsiveImage[];
+  responsive?: ResponsiveImage[];
 };
 
 type Props = {

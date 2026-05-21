@@ -14,14 +14,14 @@ type ResponsiveImage = {
 
 type Thumbnail = {
   original: string;
-  responsive: ResponsiveImage[];
+  responsive?: ResponsiveImage[];
 };
 
 type CardProjectProps = {
   _id: string;
   title: string;
   shortDescription: string;
-  thumbnail: Thumbnail;
+  thumbnail: Thumbnail
   hero: boolean;
   onToggleHero: (id: string, currentHero: boolean) => void;
   onDelete: (id: string) => void;

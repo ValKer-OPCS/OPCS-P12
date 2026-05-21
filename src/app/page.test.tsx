@@ -1,6 +1,5 @@
 import { render, screen } from "@testing-library/react";
 
-// Mocks des containers
 jest.mock("@/containers/Header/Header", () => ({
   __esModule: true,
   default: () => <div data-testid="mock-header" />,
@@ -31,7 +30,6 @@ jest.mock("@/containers/Contact/Contact", () => ({
   default: () => <div data-testid="mock-contact" />,
 }));
 
-// Mock complet de la page pour éviter l'exécution du Server Component async
 jest.mock("./page", () => ({
   __esModule: true,
   default: () => (

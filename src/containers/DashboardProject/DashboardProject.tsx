@@ -108,7 +108,7 @@ export default function DashboardProject() {
       <div className={styles.grid}>
         {projects.map((project) => (
           <AdminProjectCard key={project._id} _id={project._id}
-            title={project.title} shortDescription={project.shortDescription} thumbnail={project.thumbnail} hero={project.hero}
+            title={project.title} shortDescription={project.shortDescription} thumbnail={project.thumbnail ?? { original: "/placeholder.webp", responsive: [] }} hero={project.hero}
             onToggleHero={handleToggleHero} onDelete={queryDelete} onEdit={() => openUpdateModal(project)} onEditImages={openImagesModal}
           />
         ))}
