@@ -7,7 +7,7 @@ const NamePlate = () => {
   return (
     <span data-testid="nameplate" className={styles.namePlate}>
         <Logo />
-        <p className={styles.name} >ValKer</p>
+        <h1 className={styles.name}>Valker, développeur web</h1>
     </span>
   )
 };

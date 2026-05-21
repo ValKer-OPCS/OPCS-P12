@@ -19,7 +19,7 @@ describe("NamePlate", () => {
 
   it("renders the name text", () => {
     render(<NamePlate />);
-    expect(screen.getByText("ValKer")).toBeInTheDocument();
+    expect(screen.getByText("Valker, développeur web")).toBeInTheDocument();
   });
 
   it("applies the correct CSS classes", () => {

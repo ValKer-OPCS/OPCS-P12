@@ -50,7 +50,11 @@ const ContactForm = () => {
   return (
     <form role="form" onSubmit={handleSubmit} className={style.form}>
 
-      <input type="text" name="secondaryEmail" tabIndex={-1} autoComplete="off" style={{ display: "none" }} />
+      <label className={style.label2}>
+        <input type="text" name="secondaryEmail" tabIndex={-1} autoComplete="off" style={{ display: "none" }} />
+        <span>Secondary Contact</span>
+      </label>
+
 
       <label className={style.label}>
         <span>Nom</span>
@@ -67,13 +71,13 @@ const ContactForm = () => {
         <input type="text" name="companyName" className={style.input} />
       </label>
 
-      <label className={style.label}>
+      <label htmlFor="messageLabel" className={style.label}>
         <span>Message</span>
-        <textarea name="message" required className={style.textarea} />
+        <textarea id="messageLabel" name="message" required className={style.textarea} />
       </label>
 
-      <label className={style.checkbox}>
-        <input type="checkbox" name="gdprConsent" required aria-label="gdpr consent" />
+      <label htmlFor="rgpd" className={style.checkbox}>
+        <input id="rgpd" type="checkbox" name="gdprConsent" required aria-label="gdpr consent" />
         <span>J&apos;accepte que mes données soient utilisées pour être recontacté.</span>
       </label>
 
