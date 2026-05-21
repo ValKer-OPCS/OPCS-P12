@@ -59,18 +59,22 @@ const AdminProjectCard = ({
       <div className={styles.actions}>
         <button className={`${styles.iconButton} ${hero ? styles.active : ""}`} onClick={() => onToggleHero(_id, hero)} >
           <FontAwesomeIcon icon={faStar} />
+          <span className={styles.srOnly} >Mettre en avant</span>
         </button>
 
         <button className={styles.iconButton} onClick={() => onEdit(_id)}>
           <FontAwesomeIcon icon={faPen} />
+          <span className={styles.srOnly}>Editer le projet</span>
         </button>
 
         <button className={styles.iconButton} onClick={() => onEditImages(_id)}>
           <FontAwesomeIcon icon={faImages} />
+          <span className={styles.srOnly}>Editer les images</span>
         </button>
 
         <button className={styles.iconButton} onClick={() => onDelete(_id)}>
           <FontAwesomeIcon icon={faTrash} />
+          <span className={styles.srOnly}>Supprimer le projet</span>
         </button>
       </div>
     </div>

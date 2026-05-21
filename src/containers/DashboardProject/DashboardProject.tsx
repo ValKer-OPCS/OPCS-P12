@@ -98,7 +98,7 @@ export default function DashboardProject() {
   return (
     <>
       <div className={styles.dashboardActions}>
-        <h1 className={styles.title}>Gestion des projets</h1>
+        <h2 className={styles.title}>Gestion des projets</h2>
 
         <button className={styles.addBtn} onClick={() => setModalCreateOpen(true)}>
           <span>+</span> Ajouter un projet
