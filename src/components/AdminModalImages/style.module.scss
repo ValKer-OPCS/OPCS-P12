@@ -8,6 +8,7 @@
   z-index: 2000;
   backdrop-filter: blur(2px);
   animation: fadeIn 0.25s ease forwards;
+
 }
 
 @keyframes fadeIn {
@@ -39,6 +40,8 @@
   width: 100%;
   animation: popIn 0.25s ease forwards;
   font-family: Montserrat;
+  max-height: 90vh;
+  overflow-y: auto;
 
   h2 {
     margin: 0;
@@ -58,6 +61,8 @@
 
 .thumbnailWrapper {
   position: relative;
+  min-width: 240px;
+  min-height: 200px;
   width: 300px;
   height: 200px;
   border-radius: 8px;

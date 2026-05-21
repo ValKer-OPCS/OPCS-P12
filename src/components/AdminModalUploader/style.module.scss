@@ -21,6 +21,8 @@
   position: relative;
   animation: fadeIn 0.2s ease-out;
   font-family: Montserrat;
+  max-height: 90vh;
+  overflow-y: auto;
 
   h2 {
     margin-bottom: 1rem;
