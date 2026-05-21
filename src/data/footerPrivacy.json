@@ -1,9 +1,9 @@
 {
   "text": [
-    "Ce site n'utilise aucun cookie et ne collecte aucune donnée automatiquement.",
-    "Les données envoyées via le formulaire sont conservées 6 mois puis effacées automatiquement.",
-    "Le site est auto-hébergé et les journaux techniques du serveur servent uniquement à assurer la sécurité.",
-    "Conformément au RGPD, vous disposez d'un droit d'accès, de rectification, d'opposition et de suppression.",
-    "Contact : rgpd@valker.dev"
+    "Ce site n'utilise aucun cookie et ne procède à aucune collecte automatisée de données personnelles.",
+    "Les informations transmises via le formulaire de contact sont traitées uniquement dans le cadre de la gestion des demandes. Elles sont hébergées sur MongoDB Atlas et peuvent transiter par un système de cache fourni par Upstash Redis. Ces données sont conservées pour une durée maximale de six (6) mois, puis supprimées de manière définitive.",
+    "L'hébergement du site est assuré par Vercel. Les journaux techniques générés par ces services peuvent être utilisés exclusivement à des fins de sécurité, de diagnostic et de bon fonctionnement de l'infrastructure. Ils ne permettent pas d'identifier directement les visiteurs et ne sont jamais exploités à des fins commerciales.",
+    "Conformément au Règlement Général sur la Protection des Données (RGPD), vous disposez d'un droit d'accès, de rectification, d'opposition, de limitation et de suppression de vos données personnelles. Vous pouvez exercer ces droits en adressant une demande à l'adresse suivante :",
+    "rgpd@valker.dev"
   ]
 }
