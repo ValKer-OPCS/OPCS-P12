@@ -3,6 +3,8 @@
 import { useState } from "react"
 import Link from 'next/link'
 import styles from './style.module.scss'
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTimes } from "@fortawesome/free-solid-svg-icons";
 
 import footerPrivacy from "@/data/footerPrivacy.json"
 import footerTerms from "@/data/footerTerms.json"
@@ -47,7 +49,9 @@ const Footer = () => {
       {activeModal && (
         <div data-testid="modal-overlay" className={styles.overlay} onClick={closeModal}>
           <div data-testid="modal-content" className={styles.modal} onClick={(e) => e.stopPropagation()}>
-            <button className={styles.close} onClick={closeModal}>X</button>
+            <button className={styles.close} onClick={closeModal} aria-label="Close modal">
+              <FontAwesomeIcon icon={faTimes} />
+            </button>
 
             {getModalText().map((line, i) => (
               <p key={i}>{line}</p>

@@ -3,6 +3,8 @@
 import styles from "./style.module.scss";
 import Carousel from "../Carousel/Carousel";
 import { Project } from "@/types/project";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTimes } from "@fortawesome/free-solid-svg-icons";
 
 interface ProjectModalProps {
   project: Project;
@@ -16,7 +18,7 @@ const ProjectModal = ({ project, onClose }: ProjectModalProps) => {
     <div data-testid="modal-overlay" className={styles.overlay} onClick={onClose} >
       <div data-testid="modal-content" className={styles.modal} onClick={(e) => e.stopPropagation()}>
         <button className={styles.close} onClick={onClose}>
-          ✕
+          <FontAwesomeIcon icon={faTimes} />
         </button>
 
         <h2 className={styles.title}>{project.title}</h2>
@@ -24,12 +26,12 @@ const ProjectModal = ({ project, onClose }: ProjectModalProps) => {
         <p className={styles.description}>{project.longDescription}</p>
 
         <ul className={styles.techList}>
-          {project.technologies.map((tech: string) => (
+          {project.technologies?.map((tech: string) => (
             <li key={tech}>{tech}</li>
           ))}
         </ul>
 
-        <Carousel images={project.carouselImages ?? ["/placeholder.webp"]} />
+        <Carousel images={ project.carouselImages?.length ? project.carouselImages : [{ original: "/placeholder.webp" }]} />
       </div>
     </div>
   );

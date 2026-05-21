@@ -6,7 +6,7 @@ export type ResponsiveImage = {
 
 export type ImageSet = {
   original: string;
-  responsive: ResponsiveImage[];
+  responsive?: ResponsiveImage[];
 };
 
 export interface Project {

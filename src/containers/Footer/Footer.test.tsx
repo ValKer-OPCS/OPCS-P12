@@ -69,7 +69,7 @@ describe("Footer", () => {
     fireEvent.click(screen.getByText("Privacy"));
     expect(screen.getByTestId("modal-overlay")).toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole("button", { name: "X" }));
+    fireEvent.click(screen.getByRole("button", { name: "Close modal" }));
     expect(screen.queryByTestId("modal-overlay")).toBeNull();
   });
 });

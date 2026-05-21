@@ -25,7 +25,7 @@ const ProjectCard = ({ project, openModal }: ProjectCardProps) => {
       <p className={styles.description}>{project.shortDescription}</p>
 
       <ul className={styles.techList}>
-        {project.technologies.map((tech: string) => (
+        {project.technologies?.map((tech: string) => (
           <li key={tech} className={styles.techItem}>
             {tech}
           </li>
