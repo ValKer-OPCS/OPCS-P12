@@ -15,7 +15,7 @@ export interface Project {
   slug: string;
   shortDescription: string;
   longDescription: string;
-  technologies: string[];
+  technologies: string[]| null;
   github?: string | null;
   demo?: string | null;
 
@@ -23,6 +23,6 @@ export interface Project {
 
   carouselImages: ImageSet[] | null;
 
-  date: number | string | Date;
+  date: number | string | Date | null;
   hero: boolean;
 }
