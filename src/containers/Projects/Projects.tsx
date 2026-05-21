@@ -2,31 +2,43 @@
 
 import { useMemo, useState } from "react";
 import ProjectCard from "@/components/ProjectCard/ProjectCard";
-import ProjectsList from "@/data/projects.json";
 import ProjectModal from "@/components/ProjectModal/ProjectModal";
 import styles from "./style.module.scss";
 import { Project } from "@/types/project";
 
-const Projects = () => {
-  const projects: Project[] = useMemo(() => ProjectsList.projects, []);
+interface ProjectsProps {
+  projects: Project[];
+}
 
-  const allTechnologies = useMemo( () => Array.from(new Set(projects.flatMap((p) => p.technologies))),
-  [projects]
+const Projects = ({ projects }: ProjectsProps) => {
+
+  const allTechnologies = useMemo(
+    () =>
+      Array.from(
+        new Set(
+          projects.flatMap((p) => p.technologies ?? [])
+        )
+      ),
+    [projects]
   );
 
   const [selectedTech, setSelectedTech] = useState<string | null>(null);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
+
   const filteredProjects = useMemo(() => {
     if (!selectedTech) return projects;
-    return projects.filter((p) => p.technologies.includes(selectedTech));
+
+    return projects.filter((p) =>
+      (p.technologies ?? []).includes(selectedTech)
+    );
   }, [projects, selectedTech]);
 
   const openModal = (project: Project) => setSelectedProject(project);
   const closeModal = () => setSelectedProject(null);
 
   return (
-    <section data-testid="projects-section" id="projects" className={styles.projectSection}>
+    <section data-testid="projects-section" id="projects" className={styles.projectSection} >
       <h2 className={styles.projectsContainerTitle}>Projects</h2>
 
       <div className={styles.filters}>
@@ -34,7 +46,7 @@ const Projects = () => {
           Tous
         </button>
 
-        {allTechnologies.map((tech: string) => (
+        {allTechnologies.map((tech) => (
           <button key={tech} className={selectedTech === tech ? styles.active : ""} onClick={() => setSelectedTech(tech)} >
             {tech}
           </button>
@@ -42,8 +54,8 @@ const Projects = () => {
       </div>
 
       <div className={styles.projectsContainer}>
-        {filteredProjects.map((project: Project) => (
-          <ProjectCard key={project.id} project={project} openModal={openModal} />
+        {filteredProjects.map((project) => (
+          <ProjectCard key={project._id} project={project} openModal={openModal} />
         ))}
       </div>
 
