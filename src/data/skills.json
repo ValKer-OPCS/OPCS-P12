@@ -1,0 +1,8 @@
+[
+  { "name": "React", "icon": "react", "level": "Avancé" },
+  { "name": "Next.js", "icon": "next", "level": "Intermédiaire" },
+  { "name": "TypeScript", "icon": "ts", "level": "Avancé" },
+  { "name": "SCSS / CSS Modules", "icon": "sass", "level": "Avancé" },
+  { "name": "Node.js", "icon": "node", "level": "Intermédiaire" },
+  { "name": "MongoDB", "icon": "mongo", "level": "Intermédiaire" }
+]
