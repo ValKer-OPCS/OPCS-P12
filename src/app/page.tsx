@@ -14,7 +14,6 @@ async function getProjects(): Promise<Project[]> {
   if (!res.ok) throw new Error("Failed to fetch projects");
 
   const json = await res.json();
-console.log(json)
   return json.data;
 }
 
