@@ -5,6 +5,14 @@ import Header from "@/containers/Header/Header";
 import Footer from "@/containers/Footer/Footer";
 import type { ReactNode } from "react";
 
+import { Inter } from "next/font/google";
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+});
+
+
 const montserratMono = Montserrat({
   variable: "--font-montserrat-mono",
   subsets: ["latin"],
@@ -62,7 +70,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className={montserratMono.variable}>
-      <body>
+      <body className={inter.variable} >
         <div className="app">
           <Header />
           {children}
