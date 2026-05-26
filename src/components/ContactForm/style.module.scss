@@ -83,3 +83,47 @@
   font-family: Montserrat;
   font-weight: bold;
 }
+
+@media (max-width: 630px) {
+  .form {
+    width: 95vw;
+    padding: 10px 2px;
+    gap: 12px;
+    border-radius: 6px;
+  }
+
+  .label {
+    font-size: 13px;
+    gap: 4px;
+    margin: 0 10px;
+  }
+
+  .input,
+  .textarea {
+    font-size: 13px;
+    padding: 8px 10px;
+    margin: 0 10px;
+  }
+
+  .textarea {
+    height: 100px;
+  }
+
+  .button {
+    font-size: 14px;
+    padding: 10px;
+    margin: 0 10px;
+  }
+
+  .checkbox {
+    font-size: 13px;
+    margin: 0 10px;
+  }
+
+  .error,
+  .success {
+    font-size: 14px;
+    text-align: center;
+    margin: 0 10px;
+  }
+}
