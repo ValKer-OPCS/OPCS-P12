@@ -3,39 +3,93 @@
     margin: 50px;
     width: 300px;
     height: 300px;
-
 }
 
 .aboutContainer {
+    position: relative;
+    overflow: hidden;
+
     margin: 50px auto 0px auto;
     justify-self: center;
     min-width: 500px;
     width: 80vw;
     min-height: 300px;
+
     border-right: 1px solid #3e4451;
     border-left: 1px solid #3e4451;
     border-bottom: 1px solid #3e4451;
 
-    // cssgradient.io
-    background: #3E4451;
-    background: linear-gradient(142deg, rgba(62, 68, 81, 1) 0%, rgb(53, 87, 97) 100%);
-
     display: flex;
-    border-radius: 10;
+    border-radius: 10px;
 
+    &::before {
+        content: "";
+        position: absolute;
+        inset: 0-20%;
+        z-index: 0;
+        background: linear-gradient(142deg, #3A3A3A 0%, #4A4A4A 100);
+        animation: rotateBg 20s linear infinite;
+        transform-origin: center;
+        transform: scale(1.4);
+    }
+
+
+    * {
+        position: relative;
+        z-index: 1;
+    }
 }
 
-.aboutText{
-
+.aboutText {
     display: flex;
     flex-direction: column;
     max-width: 40vw;
     justify-content: center;
 
-
     p {
         margin-bottom: 10px;
         color: white;
         font-family: Montserrat;
+    }
+}
+
+@keyframes rotateBg {
+    0% {
+        transform: rotate(0deg) scale(1.4);
+    }
+
+    100% {
+        transform: rotate(360deg) scale(1.4);
+    }
+}
+
+@media (max-width: 630px) {
+    .aboutContainer {
+        flex-direction: column;
+        align-items: center;
+
+        width: 95vw;
+        min-width: unset;
+        padding: 20px 0;
+        margin-top: 30px;
+
+        border: 1px solid #3e4451;
+        border-radius: 12px;
+    }
+
+    .aboutPic {
+        width: 180px;
+        height: 180px;
+        margin: 0 0 5px 0;
+    }
+
+    .aboutText {
+        max-width: 90vw;
+        text-align: center;
+
+        p {
+            font-size: 14px;
+            line-height: 1.5;
+        }
     }
 }
