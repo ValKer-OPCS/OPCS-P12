@@ -5,6 +5,7 @@ import Projects from "@/containers/Projects/Projects";
 import HeroProjects from "@/containers/HeroProject/HeroProject";
 import Contact from "@/containers/Contact/Contact";
 import { Project } from "@/types/project";
+import Skills from "@/containers/Skills/Skills";
 
 async function getProjects(): Promise<Project[]> {
   const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/projects`, {
@@ -28,6 +29,8 @@ export default async function Home() {
     <div className={styles.page}>
       <main className={styles.main}>
         <AboutMe />
+
+        <Skills />
 
         <HeroProjects projects={heroProjects} />
 
