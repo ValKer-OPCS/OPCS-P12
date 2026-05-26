@@ -56,16 +56,17 @@ describe("ProjectCard", () => {
     expect(screen.getByText("TypeScript")).toBeInTheDocument();
   });
 
-  it("renders the thumbnail image using ImageSet.original", () => {
+  it("renders the thumbnail image using original when responsive exists", () => {
     render(<ProjectCard project={project} openModal={openModalMock} />);
 
-    const img = screen.getByTestId("mock-image");
-    const expectedSrc = project.thumbnail?.responsive?.[0]?.url ?? null;
+    const img = screen.getByTestId("project-thumbnail");
 
-    expect(img).toHaveAttribute("data-src", expectedSrc);
+    const expectedSrc = project.thumbnail?.original;
 
-    expect(img).toHaveAttribute("data-alt", project.title);
+    expect(img.getAttribute("src")).toBe(expectedSrc);
+    expect(img).toHaveAttribute("alt", `${project.title} - aperçu du projet`);
   });
+
 
   it("calls openModal when clicking the card", () => {
     render(<ProjectCard project={project} openModal={openModalMock} />);
