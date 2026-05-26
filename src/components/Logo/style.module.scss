@@ -1,20 +1,49 @@
-.logoContainer{
-    display: block;
-    border: 2px solid transparent;
-    border-radius: 50%;
-    height: 75px;
-    width: 75px;
+.logoContainer {
+  display: block;
 
-    svg{
-        padding-top: 15px
-    }
-    svg:hover{
-        animation: tilt 1s ease-in-out infinite;
-    }
+  position: relative;
+  z-index: 3;
+
+  border: 2px solid transparent;
+  border-radius: 50%;
+
+  width: 75px;
+  height: 75px;
+
+  svg {
+    padding-top: 15px;
+    transition: transform 0.2s ease;
+  }
+
+  &:hover svg {
+    animation: tilt 1s ease-in-out infinite;
+  }
 }
 
 @keyframes tilt {
-  0%   { transform: rotate(0deg); }
-  50%  { transform: rotate(10deg); }
-  100% { transform: rotate(0deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+
+  25% {
+    transform: rotate(-10deg);
+  }
+
+  50% {
+    transform: rotate(10deg);
+  }
+
+  75% {
+    transform: rotate(-5deg);
+  }
+
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+@media (max-width: 630px) {
+  .logoContainer {
+    display: none;
+  }
 }
