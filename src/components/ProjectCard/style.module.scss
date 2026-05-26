@@ -1,8 +1,7 @@
 .card {
   border: 1px solid #2a2a2a;
-   // cssgradient.io
-    background: #3E4451;
-    background: linear-gradient(340deg, rgba(62, 68, 81, 1) 0%, rgb(53, 87, 97) 100%);
+  background: #282c34;
+  border: 1px solid #3e4451;
 
   padding: 20px;
   border-radius: 10px;
@@ -18,10 +17,8 @@
 }
 
 .card:hover {
-  // cssgradient.io
-    background: #3E4451;
-    background: linear-gradient(142deg, rgba(62, 68, 81, 1) 0%, rgb(53, 87, 97) 100%);
-    cursor: pointer;
+  background: #282c34;
+  cursor: pointer;
 
 }
 
@@ -86,6 +83,7 @@
 .links a:hover {
   text-decoration: underline;
 }
+
 @media (max-width: 630px) {
   .card {
     width: 95vw;
