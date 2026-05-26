@@ -2,6 +2,7 @@ import { render, screen } from "@testing-library/react";
 import RootLayout from "./layout";
 
 jest.mock("next/font/google", () => ({
+   Inter: () => ({ className: "mocked-inter", variable: "--font-inter" }),
   Montserrat: () => ({
     variable: "--mock-font",
   }),
