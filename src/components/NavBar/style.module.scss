@@ -1,24 +1,49 @@
 .navBar {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  font-family: Montserrat;
+
+  a,
+  button {
+    all: unset;
+    cursor: pointer;
+    color: white;
+    text-decoration: none;
+    font-family: inherit;
+
+    padding: 4px 6px;
+    transition: opacity 0.2s ease;
+
     display: flex;
-    flex-direction: row;
-    gap: 10px;
-    font-family: Montserrat;
+    align-items: center;
+    gap: 6px;
+  }
 
-    a,
-    button {
-        all: unset;
-        cursor: pointer;
-        color: white;
-        text-decoration: none;
-        font-family: inherit;
+  a:hover,
+  button:hover {
+    opacity: 0.7;
+  }
 
+  .icon {
+    display: none;
+    font-size: 18px;
+  }
 
-        padding: 4px 6px;
-        transition: opacity 0.2s ease;
+  .text {
+    display: inline;
+  }
+}
+
+@media (max-width: 630px) {
+  .navBar {
+    .icon {
+      display: inline-block;
+      font-size: 25px;
     }
 
-    a:hover,
-    button:hover {
-        opacity: 0.7;
+    .text {
+      display: none;
     }
+  }
 }
