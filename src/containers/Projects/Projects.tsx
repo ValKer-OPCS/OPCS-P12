@@ -39,7 +39,7 @@ const Projects = ({ projects }: ProjectsProps) => {
 
   return (
     <section data-testid="projects-section" id="projects" className={styles.projectSection} >
-      <h2 className={styles.projectsContainerTitle}>Projects</h2>
+      <h2 className={styles.projectsContainerTitle}>Projets</h2>
 
       <div className={styles.filters}>
         <button className={!selectedTech ? styles.active : ""} onClick={() => setSelectedTech(null)} >

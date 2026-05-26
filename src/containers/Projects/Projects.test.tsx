@@ -55,7 +55,7 @@ describe("Projects", () => {
   it("renders the title", () => {
     render(<Projects projects={mockProjects} />);
     expect(
-      screen.getByRole("heading", { level: 2, name: "Projects" })
+      screen.getByRole("heading", { level: 2, name: "Projets" })
     ).toBeInTheDocument();
   });
 
