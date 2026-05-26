@@ -1,6 +1,8 @@
 .headerContainer {
-  position: relative;
-  z-index: 0;
+  position: sticky;
+  top: 20px;
+  z-index: 9999;
+
 
   width: 90%;
   margin: 20px auto;
@@ -10,13 +12,14 @@
   justify-content: space-between;
   align-items: center;
 
-  background: rgba(255, 255, 255, 0.08);
-
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-
   border-radius: 100px;
-  overflow: visible;
+  overflow: hidden;
+
+  background-color: rgba(15, 15, 20, 0.35);
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
+
+  border: 1px solid rgba(255, 255, 255, 0.12);
 
   box-shadow:
     0 8px 20px rgba(0, 0, 0, 0.25),
@@ -24,13 +27,13 @@
 
   a {
     position: relative;
-    z-index: 2;
+    z-index: 3;
 
     text-decoration: none;
     color: #fff;
   }
 
-  >* {
+  > * {
     position: relative;
     z-index: 2;
   }
@@ -39,13 +42,11 @@
     content: "";
 
     position: absolute;
-    inset: -3px;
-
-    z-index: 1;
+    inset: 0;
+    z-index: 2;
     pointer-events: none;
-
     border-radius: inherit;
-    padding: 3px;
+    padding: 2px;
 
     background: linear-gradient(90deg,
         #5BCEFA,
@@ -89,8 +90,6 @@
     gap: 10px;
 
     &::after {
-      inset: -2px;
-      padding: 2px;
       background-size: 300% 100%;
     }
   }
