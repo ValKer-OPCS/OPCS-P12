@@ -5,7 +5,11 @@ import { Project } from "@/types/project";
 jest.mock("next/image", () => ({
   __esModule: true,
   default: (props: { src: string; alt: string }) => (
-    <div data-testid="mock-image" data-src={props.src} data-alt={props.alt} />
+    <div
+      data-testid="mock-image"
+      data-src={props.src}
+      data-alt={props.alt}
+    />
   ),
 }));
 
@@ -24,16 +28,28 @@ describe("ProjectCard", () => {
 
     thumbnail: {
       original: "/thumb.webp",
+      originalPath: "/thumb.webp",
       responsive: [
-        { name: "small", width: 400, url: "/thumb-small.webp" },
+        {
+          name: "small",
+          width: 400,
+          url: "/thumb-small.webp",
+          path: "/thumb-small.webp",
+        },
       ],
     },
 
     carouselImages: [
       {
         original: "/img1.jpg",
+        originalPath: "/img1.jpg",
         responsive: [
-          { name: "small", width: 400, url: "/img1-small.jpg" },
+          {
+            name: "small",
+            width: 400,
+            url: "/img1-small.jpg",
+            path: "/img1-small.jpg",
+          },
         ],
       },
     ],
@@ -64,9 +80,11 @@ describe("ProjectCard", () => {
     const expectedSrc = project.thumbnail?.original;
 
     expect(img.getAttribute("src")).toBe(expectedSrc);
-    expect(img).toHaveAttribute("alt", `${project.title} - aperçu du projet`);
+    expect(img).toHaveAttribute(
+      "alt",
+      `${project.title} - aperçu du projet`
+    );
   });
-
 
   it("calls openModal when clicking the card", () => {
     render(<ProjectCard project={project} openModal={openModalMock} />);
