@@ -7,21 +7,24 @@ import styles from "./style.module.scss";
 import { Project } from "@/types/project";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash , faTimes } from "@fortawesome/free-solid-svg-icons";
+import { faTrash, faTimes } from "@fortawesome/free-solid-svg-icons";
 
 type ResponsiveImage = {
   name: string;
   width: number;
   url: string;
+  path: string;
 };
 
 type Thumbnail = {
   original: string;
+  originalPath: string;
   responsive?: ResponsiveImage[];
 } | null;
 
 type CarouselImage = {
   original: string;
+  originalPath: string;
   responsive?: ResponsiveImage[];
 };
 
@@ -31,17 +34,28 @@ type Props = {
   onUpdated: (updated: Project) => void;
 };
 
-const AdminProjectImagesModal = ({ project, onClose, onUpdated }: Props) => {
-  const [thumbnail, setThumbnail] = useState<Thumbnail>(project.thumbnail ?? null);
-  const [carousel, setCarousel] = useState<CarouselImage[]>(project.carouselImages ?? []);
+const AdminProjectImagesModal = ({
+  project,
+  onClose,
+  onUpdated,
+}: Props) => {
+  const [thumbnail, setThumbnail] = useState<Thumbnail>(
+    project.thumbnail ?? null
+  );
+
+  const [carousel, setCarousel] = useState<CarouselImage[]>(
+    project.carouselImages ?? []
+  );
+
   const [loading, setLoading] = useState(false);
 
   const getToken = () => {
-    const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
-    return token;
+    return typeof window !== "undefined"
+      ? localStorage.getItem("token")
+      : null;
   };
 
-  const uploadImage = async (file: File, type: "thumbnail" | "carousel") => {
+  const uploadImage = async (file: File, type: "thumbnail" | "carousel" ) => {
     const token = getToken();
     const formData = new FormData();
     formData.append("file", file);
@@ -51,9 +65,9 @@ const AdminProjectImagesModal = ({ project, onClose, onUpdated }: Props) => {
       {
         method: "POST",
         headers: {
-          Authorization: token ? `Bearer ${token}` : ""
+          Authorization: token ? `Bearer ${token}` : "",
         },
-        body: formData
+        body: formData,
       }
     );
 
@@ -92,32 +106,59 @@ const AdminProjectImagesModal = ({ project, onClose, onUpdated }: Props) => {
     if (!thumbnail) return;
 
     const token = getToken();
-    const filename = thumbnail.original.split("/").pop();
-    if (!filename) return;
 
-    await fetch(`/api/images/${filename}?projectId=${project._id}&type=thumbnail`, {
-      method: "DELETE",
-      headers: {
-        Authorization: token ? `Bearer ${token}` : ""
+    const res = await fetch(`/api/images/delete?projectId=${project._id}&type=thumbnail`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token ? `Bearer ${token}` : "",
+        },
+        body: JSON.stringify({
+          originalPath: thumbnail.originalPath,
+          responsive: thumbnail.responsive
+            ?.map((img) => img.path)
+            .filter(Boolean) ?? [],
+        }),
       }
-    });
+    );
 
-    setThumbnail(null);
+    const result = await res.json();
+
+    if (result.success) {
+      setThumbnail(null);
+      onUpdated(result.project);
+    }
   };
 
-  const deleteCarouselImage = async (url: string) => {
+  const deleteCarouselImage = async (image: CarouselImage) => {
     const token = getToken();
-    const filename = url.split("/").pop();
-    if (!filename) return;
 
-    await fetch(`/api/images/${filename}?projectId=${project._id}`, {
-      method: "DELETE",
-      headers: {
-        Authorization: token ? `Bearer ${token}` : ""
+    const res = await fetch(`/api/images/delete?projectId=${project._id}&type=carousel`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token ? `Bearer ${token}` : "",
+        },
+        body: JSON.stringify({
+          originalPath: image.originalPath,
+          responsive: image.responsive
+            ?.map((img) => img.path)
+            .filter(Boolean) ?? [],
+        }),
       }
-    });
+    );
 
-    setCarousel((prev) => prev.filter((img) => img.original !== url));
+    const result = await res.json();
+
+    if (result.success) {
+      setCarousel((prev) =>
+        prev.filter((img) => img.originalPath !== image.originalPath)
+      );
+
+      onUpdated(result.project);
+    }
   };
 
   return (
@@ -147,7 +188,6 @@ const AdminProjectImagesModal = ({ project, onClose, onUpdated }: Props) => {
           <input type="file" accept="image/*" disabled={!!thumbnail} className={thumbnail ? styles.disabledInput : ""} onChange={handleThumbnailUpload} />
         </div>
 
-
         <h3>Images du carousel</h3>
 
         <div className={styles.carouselGrid}>
@@ -156,7 +196,7 @@ const AdminProjectImagesModal = ({ project, onClose, onUpdated }: Props) => {
               <div className={styles.imageWrapper}>
                 <Image src={img.original} alt={`carousel-${i}`} width={200} height={200} className={styles.carouselImage} />
 
-                <button className={styles.deleteIcon} onClick={() => deleteCarouselImage(img.original)} >
+                <button className={styles.deleteIcon} onClick={() => deleteCarouselImage(img)}>
                   <FontAwesomeIcon icon={faTrash} />
                 </button>
               </div>
@@ -166,9 +206,6 @@ const AdminProjectImagesModal = ({ project, onClose, onUpdated }: Props) => {
 
         <div className={styles.fileInput}>
           <input type="file" accept="image/*" onChange={handleCarouselUpload} />
-        </div>
-
-        <div className={styles.actions}>
         </div>
       </div>
     </div>
