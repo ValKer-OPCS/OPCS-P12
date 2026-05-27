@@ -3,64 +3,7 @@ export const runtime = "nodejs";
 import { NextResponse } from "next/server";
 import { dbConnect } from "@/lib/db";
 import Project from "@/models/Project";
-import path from "path";
-import { unlink } from "fs/promises";
-
-
-
-const deleteImageAndResponsive = async (filename: string) => {
-  const uploadDir = path.join(process.cwd(), "public/uploads");
-
-
-  const originalPath = path.join(uploadDir, filename);
-  await unlink(originalPath).catch(() => {});
-
-
-  const base = filename.replace(".webp", "");
-  const responsiveFiles = [
-    `${base}-sm.webp`,
-    `${base}-md.webp`,
-    `${base}-lg.webp`
-  ];
-
-  for (const file of responsiveFiles) {
-    const filePath = path.join(uploadDir, file);
-    await unlink(filePath).catch(() => {});
-  }
-};
-
-export const GET = async (req: Request, context: { params: Promise<{ id: string }> }) => {
-  const { id } = await context.params;
-  try {
-    await dbConnect();
-    const project = await Project.findById(id);
-    if (!project) {
-      return NextResponse.json({ success: false, message: "Projet introuvable" }, { status: 404 });
-    }
-    return NextResponse.json({ success: true, data: project });
-  } catch {
-    return NextResponse.json({ success: false, message: "Erreur serveur" }, { status: 500 });
-  }
-};
-
-export const PATCH = async (req: Request, context: { params: Promise<{ id: string }> }) => {
-  const { id } = await context.params;
-  try {
-    await dbConnect();
-    const body = await req.json();
-
-    const updated = await Project.findByIdAndUpdate(id, body, { returnDocument: "after" });
-
-    if (!updated) {
-      return NextResponse.json({ success: false, message: "Projet introuvable" }, { status: 404 });
-    }
-
-    return NextResponse.json({ success: true, data: updated });
-  } catch {
-    return NextResponse.json({ success: false, message: "Erreur serveur" }, { status: 500 });
-  }
-};
-
+import { supabase } from "@/lib/supabase";
 
 export const DELETE = async (req: Request, context: { params: Promise<{ id: string }> }) => {
   const { id } = await context.params;
@@ -76,17 +19,41 @@ export const DELETE = async (req: Request, context: { params: Promise<{ id: stri
       );
     }
 
+    const pathsToDelete: string[] = [];
 
-    if (project.thumbnail?.original) {
-      const filename = path.basename(project.thumbnail.original);
-      await deleteImageAndResponsive(filename);
+    if (project.thumbnail) {
+      if (project.thumbnail.originalPath) {
+        pathsToDelete.push(project.thumbnail.originalPath);
+      }
+
+      if (Array.isArray(project.thumbnail.responsive)) {
+        for (const img of project.thumbnail.responsive) {
+          if (img.path) pathsToDelete.push(img.path);
+        }
+      }
     }
-
 
     if (Array.isArray(project.carouselImages)) {
       for (const img of project.carouselImages) {
-        const filename = path.basename(img.original);
-        await deleteImageAndResponsive(filename);
+        if (img.originalPath) {
+          pathsToDelete.push(img.originalPath);
+        }
+
+        if (Array.isArray(img.responsive)) {
+          for (const r of img.responsive) {
+            if (r.path) pathsToDelete.push(r.path);
+          }
+        }
+      }
+    }
+
+    if (pathsToDelete.length > 0) {
+      const { error } = await supabase.storage
+        .from("portfolio")
+        .remove(pathsToDelete);
+
+      if (error) {
+        console.error("Supabase delete error:", error);
       }
     }
 
