@@ -31,7 +31,12 @@ const ProjectModal = ({ project, onClose }: ProjectModalProps) => {
           ))}
         </ul>
 
-        <Carousel images={ project.carouselImages?.length ? project.carouselImages : [{ original: "/placeholder.webp" }]} />
+        <Carousel images={project.carouselImages?.length ? project.carouselImages : [
+          {
+            original: "/placeholder.webp",
+            originalPath: "/placeholder.webp",
+            responsive: [],
+          },]} />
       </div>
     </div>
   );
