@@ -1,16 +1,28 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import Carousel from "./Carousel";
+import { ImageSet } from "@/types/project";
 
-const makeImage = (url: string) => ({
+const makeImage = (url: string): ImageSet => ({
   original: url,
+  originalPath: url,
   responsive: [
-    { name: "sm", width: 480, url: url.replace(".jpg", "-sm.jpg") },
-    { name: "md", width: 1024, url: url.replace(".jpg", "-md.jpg") },
+    {
+      name: "sm",
+      width: 480,
+      url: url.replace(".jpg", "-sm.jpg"),
+      path: url.replace(".jpg", "-sm.jpg"),
+    },
+    {
+      name: "md",
+      width: 1024,
+      url: url.replace(".jpg", "-md.jpg"),
+      path: url.replace(".jpg", "-md.jpg"),
+    },
   ],
 });
 
 describe("Carousel", () => {
-  const images = [
+  const images: ImageSet[] = [
     makeImage("/img1.jpg"),
     makeImage("/img2.jpg"),
     makeImage("/img3.jpg"),
@@ -20,7 +32,10 @@ describe("Carousel", () => {
     render(<Carousel images={images} />);
 
     const img = screen.getByRole("img");
-    expect(img).toHaveAttribute("src", expect.stringContaining("/img1-sm.jpg"));
+    expect(img).toHaveAttribute(
+      "src",
+      expect.stringContaining("/img1-sm.jpg")
+    );
   });
 
   it("shows navigation buttons when multiple images", () => {
@@ -76,6 +91,7 @@ describe("Carousel", () => {
     const prevBtn = screen.getByRole("button", { name: "‹" });
 
     fireEvent.click(prevBtn);
+
     expect(screen.getByRole("img")).toHaveAttribute(
       "src",
       expect.stringContaining("/img3-sm.jpg")
@@ -85,17 +101,19 @@ describe("Carousel", () => {
   it("clicking a dot changes the image", () => {
     render(<Carousel images={images} />);
 
-    const dots = screen.getAllByRole("button").filter(
-      (btn) => btn.textContent === ""
-    );
+    const dots = screen
+      .getAllByRole("button")
+      .filter((btn) => btn.textContent === "");
 
     fireEvent.click(dots[2]);
+
     expect(screen.getByRole("img")).toHaveAttribute(
       "src",
       expect.stringContaining("/img3-sm.jpg")
     );
 
     fireEvent.click(dots[0]);
+
     expect(screen.getByRole("img")).toHaveAttribute(
       "src",
       expect.stringContaining("/img1-sm.jpg")
