@@ -10,7 +10,11 @@ jest.mock("../Carousel/Carousel", () => ({
 jest.mock("next/image", () => ({
   __esModule: true,
   default: (props: { src: string; alt: string }) => (
-    <div data-testid="mock-image" data-src={props.src} data-alt={props.alt} />
+    <div
+      data-testid="mock-image"
+      data-src={props.src}
+      data-alt={props.alt}
+    />
   ),
 }));
 
@@ -25,12 +29,21 @@ describe("ProjectModal", () => {
 
     thumbnail: {
       original: "/thumb.webp",
+      originalPath: "/thumb.webp",
       responsive: [],
     },
 
     carouselImages: [
-      { original: "/img1.jpg", responsive: [] },
-      { original: "/img2.jpg", responsive: [] },
+      {
+        original: "/img1.jpg",
+        originalPath: "/img1.jpg",
+        responsive: [],
+      },
+      {
+        original: "/img2.jpg",
+        originalPath: "/img2.jpg",
+        responsive: [],
+      },
     ],
 
     technologies: ["React", "TypeScript", "Next.js"],
@@ -38,16 +51,20 @@ describe("ProjectModal", () => {
     demo: "https://example.com",
     date: 2026,
     _id: "",
-    hero: false
+    hero: false,
   };
-
 
   beforeEach(() => {
     onCloseMock.mockClear();
   });
 
   it("returns null when no project is provided", () => {
-    const { container } = render(<ProjectModal project={null as unknown as Project} onClose={onCloseMock} />);
+    const { container } = render(
+      <ProjectModal
+        project={null as unknown as Project}
+        onClose={onCloseMock}
+      />
+    );
 
     expect(container.firstChild).toBeNull();
   });
@@ -58,7 +75,9 @@ describe("ProjectModal", () => {
     expect(screen.getByTestId("modal-overlay")).toBeInTheDocument();
     expect(screen.getByTestId("modal-content")).toBeInTheDocument();
     expect(screen.getByText("My Project")).toBeInTheDocument();
-    expect(screen.getByText("A long description of the project")).toBeInTheDocument();
+    expect(
+      screen.getByText("A long description of the project")
+    ).toBeInTheDocument();
   });
 
   it("renders the technologies list", () => {
