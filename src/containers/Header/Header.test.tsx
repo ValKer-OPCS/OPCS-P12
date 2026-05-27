@@ -23,7 +23,7 @@ describe("Header", () => {
 
   it("renders the NamePlate component inside the Link", () => {
     render(<Header />);
-    const link = screen.getByRole("link", { name: "" }); // NamePlate mock n'a pas de texte
+    const link = screen.getByRole("link", { name: "" });
     expect(link).toHaveAttribute("href", "/");
     expect(screen.getByTestId("mock-nameplate")).toBeInTheDocument();
   });

@@ -18,12 +18,21 @@ describe("HeroCard", () => {
 
     thumbnail: {
       original: "/thumb.webp",
+      originalPath: "/thumb.webp",
       responsive: [],
     },
 
     carouselImages: [
-      { original: "/img1.jpg", responsive: [] },
-      { original: "/img2.jpg", responsive: [] },
+      {
+        original: "/img1.jpg",
+        originalPath: "/img1.jpg",
+        responsive: [],
+      },
+      {
+        original: "/img2.jpg",
+        originalPath: "/img2.jpg",
+        responsive: [],
+      },
     ],
 
     technologies: ["React", "TypeScript", "Next.js"],
@@ -31,7 +40,7 @@ describe("HeroCard", () => {
     demo: "https://example.com",
     date: 2026,
     _id: "",
-    hero: false
+    hero: false,
   };
 
   beforeEach(() => {
