@@ -2,10 +2,12 @@ export type ResponsiveImage = {
   name: string;
   width: number;
   url: string;
+  path: string;
 };
 
 export type ImageSet = {
   original: string;
+  originalPath: string;
   responsive?: ResponsiveImage[];
 };
 
