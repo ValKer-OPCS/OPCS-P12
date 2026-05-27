@@ -1,15 +1,14 @@
 export const runtime = "nodejs";
 
 import { NextResponse } from "next/server";
-import { mkdir } from "fs/promises";
-import path from "path";
 import sharp from "sharp";
 import ProjectModel from "@/models/Project";
+import { supabase } from "@/lib/supabase";
 
 const sizes = [
   { name: "sm", width: 480 },
   { name: "md", width: 1024 },
-  { name: "lg", width: 1600 }
+  { name: "lg", width: 1600 },
 ];
 
 export const POST = async (req: Request) => {
@@ -38,42 +37,64 @@ export const POST = async (req: Request) => {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    const baseName = file.name.split(".")[0];
-    const filename = `${Date.now()}-${baseName}`;
+    const filename = Date.now().toString();
 
-    const uploadDir = path.join(process.cwd(), "public/uploads");
-    await mkdir(uploadDir, { recursive: true });
-
-    const originalFilename = `${filename}.webp`;
-    const originalPath = path.join(uploadDir, originalFilename);
-
-    await sharp(buffer)
+    const optimizedBuffer = await sharp(buffer)
       .rotate()
       .webp({ quality: 80 })
-      .toFile(originalPath);
+      .toBuffer();
+
+    const originalPath = `projects/${projectId}/${filename}.webp`;
+
+    const { error: originalUploadError } = await supabase.storage
+      .from("portfolio")
+      .upload(originalPath, optimizedBuffer, {
+        contentType: "image/webp",
+        upsert: false,
+      });
+
+    if (originalUploadError) throw originalUploadError;
+
+    const { data: originalPublic } = supabase.storage
+      .from("portfolio")
+      .getPublicUrl(originalPath);
 
     const responsive = await Promise.all(
       sizes.map(async ({ name, width }) => {
-        const responsiveFilename = `${filename}-${name}.webp`;
-        const responsivePath = path.join(uploadDir, responsiveFilename);
-
-        await sharp(buffer)
+        const resizedBuffer = await sharp(buffer)
           .rotate()
           .resize({ width, withoutEnlargement: true })
           .webp({ quality: 80 })
-          .toFile(responsivePath);
+          .toBuffer();
+
+        const responsivePath = `projects/${projectId}/${filename}-${name}.webp`;
+
+        const { error } = await supabase.storage
+          .from("portfolio")
+          .upload(responsivePath, resizedBuffer, {
+            contentType: "image/webp",
+            upsert: false,
+          });
+
+        if (error) throw error;
+
+        const { data: publicData } = supabase.storage
+          .from("portfolio")
+          .getPublicUrl(responsivePath);
 
         return {
           name,
           width,
-          url: `/uploads/${responsiveFilename}`
+          url: publicData.publicUrl,
+          path: responsivePath,
         };
       })
     );
 
     const imageSet = {
-      original: `/uploads/${originalFilename}`,
-      responsive
+      original: originalPublic.publicUrl,
+      originalPath,
+      responsive,
     };
 
     const project = await ProjectModel.findById(projectId);
@@ -96,7 +117,7 @@ export const POST = async (req: Request) => {
 
     return NextResponse.json({
       success: true,
-      project
+      project,
     });
   } catch (error) {
     console.error(error);
