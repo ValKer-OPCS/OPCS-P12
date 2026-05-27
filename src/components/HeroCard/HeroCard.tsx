@@ -15,7 +15,12 @@ const HeroCard = ({ project, openModal }: HeroCardProps) => {
   return (
     <article className={styles.card} onClick={() => openModal(project)} role="button" tabIndex={0} >
       <div>
-        <Carousel images={ project.carouselImages?.length ? project.carouselImages : [{ original: "/placeholder.webp" }]} />
+        <Carousel images={project.carouselImages?.length ? project.carouselImages : [
+          {
+            original: "/placeholder.webp",
+            originalPath: "/placeholder.webp",
+            responsive: [],
+          }, ] } />
       </div>
 
       <h3 className={styles.title}>{project.title}</h3>
