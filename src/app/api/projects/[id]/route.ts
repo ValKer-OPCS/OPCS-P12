@@ -68,3 +68,32 @@ export const DELETE = async (req: Request, context: { params: Promise<{ id: stri
     );
   }
 };
+export async function PATCH(req: Request, context: { params: Promise<{ id: string }> }) {
+  const { id } = await context.params;
+
+  try {
+    await dbConnect();
+
+    const body = await req.json();
+
+    const updated = await Project.findByIdAndUpdate(
+      id,
+      body,
+      { new: true }
+    );
+
+    if (!updated) {
+      return Response.json(
+        { success: false, error: "Project not found" },
+        { status: 404 }
+      );
+    }
+
+    return Response.json({ success: true, data: updated });
+  } catch (err) {
+    console.error("PATCH error:", err);
+    return Response.json({ success: false, error: "PATCH failed" }, { status: 500 });
+  }
+}
+
+
