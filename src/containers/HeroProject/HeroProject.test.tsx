@@ -1,17 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { render, screen } from "@testing-library/react";
+import { render, screen, fireEvent, within } from "@testing-library/react";
 import HeroProjects from "./HeroProject";
 
-// Mock HeroCard
-jest.mock("@/components/HeroCard/HeroCard", () => ({
-  __esModule: true,
-  default: ({ project }: any) => (
-    <div data-testid="mock-hero-card">{project.title}</div>
-  ),
-}));
-
-// 🔥 Mock conforme au type Project
 const mockProjects = [
   {
     _id: "1",
@@ -43,6 +34,33 @@ const mockProjects = [
   },
 ];
 
+jest.mock("@/components/HeroCarousel/HeroCarousel", () => ({
+  __esModule: true,
+  default: ({ projects, onSelect }: any) => (
+    <div data-testid="mock-carousel">
+      {projects.map((p: any) => (
+        <button
+          key={p._id}
+          data-testid="mock-carousel-item"
+          onClick={() => onSelect(p)}
+        >
+          {p.title}
+        </button>
+      ))}
+    </div>
+  ),
+}));
+
+jest.mock("@/components/ProjectModal/ProjectModal", () => ({
+  __esModule: true,
+  default: ({ project, onClose }: any) => (
+    <div data-testid="mock-modal">
+      <p>{project.title}</p>
+      <button onClick={onClose}>close</button>
+    </div>
+  ),
+}));
+
 describe("HeroProjects", () => {
   it("renders the section", () => {
     render(<HeroProjects projects={mockProjects} />);
@@ -56,15 +74,31 @@ describe("HeroProjects", () => {
     ).toBeInTheDocument();
   });
 
-  it("renders one HeroCard per project", () => {
+  it("renders the carousel", () => {
+    render(<HeroProjects projects={mockProjects} />);
+    expect(screen.getByTestId("mock-carousel")).toBeInTheDocument();
+  });
+
+  it("opens the modal when a carousel item is clicked", () => {
     render(<HeroProjects projects={mockProjects} />);
 
-    const cards = screen.getAllByTestId("mock-hero-card");
-    expect(cards.length).toBe(mockProjects.length);
+    const firstItem = screen.getAllByTestId("mock-carousel-item")[0];
+    fireEvent.click(firstItem);
 
-    mockProjects.forEach((p) => {
-      expect(screen.getByText(p.title)).toBeInTheDocument();
-    });
+    expect(screen.getByTestId("mock-modal")).toBeInTheDocument();
+    expect(within(screen.getByTestId("mock-modal")).getByText("Projet Hero 1")).toBeInTheDocument();
+  });
+
+  it("closes the modal when clicking the close button", () => {
+    render(<HeroProjects projects={mockProjects} />);
+
+    const firstItem = screen.getAllByTestId("mock-carousel-item")[0];
+    fireEvent.click(firstItem);
+
+    const closeButton = screen.getByText("close");
+    fireEvent.click(closeButton);
+
+    expect(screen.queryByTestId("mock-modal")).not.toBeInTheDocument();
   });
 
   it("applies the correct CSS class to the section", () => {

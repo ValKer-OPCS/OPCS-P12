@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import HeroCard from "@/components/HeroCard/HeroCard";
 import ProjectModal from "@/components/ProjectModal/ProjectModal";
 import { Project } from "@/types/project";
 import styles from "./style.module.scss";
+import HeroCarousel from "@/components/HeroCarousel/HeroCarousel";
 
 interface HeroProjectsProps {
   projects: Project[];
@@ -20,11 +20,7 @@ const HeroProjects = ({ projects }: HeroProjectsProps) => {
     <section data-testid="hero-projects" id="heroProjects" className={styles.heroSection} >
       <h2 className={styles.projectsContainerTitle}>Projets mis en avant</h2>
 
-      <div className={styles.projectsContainer}>
-        {projects.map((project) => (
-          <HeroCard key={project._id} project={project} openModal={openModal} />
-        ))}
-      </div>
+      <HeroCarousel projects={projects} onSelect={openModal} />
 
       {selectedProject && (
         <ProjectModal project={selectedProject} onClose={closeModal} />
