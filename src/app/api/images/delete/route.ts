@@ -26,13 +26,6 @@ export const DELETE = async (req: NextRequest) => {
 
     const { originalPath, responsive } = body;
 
-    console.log("DELETE DEBUG:", {
-      projectId,
-      type,
-      originalPath,
-      responsive,
-    });
-
     if (!projectId || !originalPath) {
       return NextResponse.json(
         { success: false, error: "missing data" },
