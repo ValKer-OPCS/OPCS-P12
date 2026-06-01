@@ -26,7 +26,7 @@ const contactSchema = z.object({
   name: z.string().min(2).max(100),
   email: z.email(),
   message: z.string().min(10).max(2000),
-  companyName: z.string().max(200).transform(v => v.trim() === "" ? undefined : v).optional(),
+  companyName: z.string().max(200).nullable().transform(v => (v === null || v.trim() === "" ? undefined : v)).optional(),
   gdprConsent: z.boolean(),
   userAgent: z.string().optional(),
   secondaryEmail: z.string().optional()
