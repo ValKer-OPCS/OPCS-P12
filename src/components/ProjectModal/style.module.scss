@@ -48,7 +48,9 @@ margin-bottom: 15px;
 }
 .description{
   font-size: 18px;
+  white-space: pre-wrap;
 }
+
 
 @media (max-width: 630px) {
   .modal {
