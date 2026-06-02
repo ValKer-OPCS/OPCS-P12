@@ -5,14 +5,15 @@
   background: #282c34;
   border-radius: 18px;
   overflow: hidden;
-
+  border: 1px solid #3e4451;
 }
 
 .slide {
   display: grid;
   grid-template-columns: 42% 58%;
-  min-height: 520px;
   animation: fade 0.5s ease;
+  height: clamp(420px, 60vh, 680px);
+  overflow: hidden;
 }
 
 @keyframes fade {
