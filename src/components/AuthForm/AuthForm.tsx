@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 
 import styles from "./style.module.scss";
 
-export default function LoginForm() {
+export default function AuthForm() {
   const router = useRouter();
 
   const [username, setUsername] = useState("");

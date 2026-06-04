@@ -34,11 +34,7 @@ type Props = {
   onUpdated: (updated: Project) => void;
 };
 
-const AdminProjectImagesModal = ({
-  project,
-  onClose,
-  onUpdated,
-}: Props) => {
+const AdminProjectImagesModal = ({ project, onClose,  onUpdated, }: Props) => {
   const [thumbnail, setThumbnail] = useState<Thumbnail>(
     project.thumbnail ?? null
   );
@@ -164,7 +160,7 @@ const AdminProjectImagesModal = ({
   return (
     <div className={styles.overlay}>
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-        <button className={styles.closeButton} onClick={onClose} disabled={loading}>
+        <button data-testid="close-button" className={styles.closeButton} onClick={onClose} disabled={loading}>
             <FontAwesomeIcon icon={faTimes} />
           </button>
         <h2>Modifier les images</h2>
@@ -185,7 +181,7 @@ const AdminProjectImagesModal = ({
         )}
 
         <div className={styles.fileInput}>
-          <input type="file" accept="image/*" disabled={!!thumbnail} className={thumbnail ? styles.disabledInput : ""} onChange={handleThumbnailUpload} />
+          <input data-testid="thumbnail-input" type="file" accept="image/*" disabled={!!thumbnail} className={thumbnail ? styles.disabledInput : ""} onChange={handleThumbnailUpload} />
         </div>
 
         <h3>Images du carousel</h3>
