@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { faUser, faFolder, faEnvelope, faArrowLeft, faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
+import { useAuth } from "@/context/AuthContext";
 import styles from "./style.module.scss";
 
 type NavItem = {
@@ -17,9 +18,10 @@ type NavItem = {
 const NavBar = () => {
   const pathname = usePathname();
   const router = useRouter();
+  const { logout } = useAuth();
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
+    logout();
     router.push("/");
   };
 
