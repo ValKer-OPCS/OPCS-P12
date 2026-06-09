@@ -8,6 +8,7 @@ import AdminModalUploader from "../../components/AdminModalUploader/AdminModalUp
 import AdminModalImages from "../../components/AdminModalImages/AdminModalImages";
 import styles from "./style.module.scss";
 import { Project } from "@/types/project";
+import { useAuth } from "@/context/AuthContext";
 
 export default function DashboardProject() {
   const [projects, setProjects] = useState<Project[]>([]);
@@ -23,6 +24,8 @@ export default function DashboardProject() {
 
   const [modalImagesOpen, setModalImagesOpen] = useState(false);
   const [projectToEditImages, setProjectToEditImages] = useState<Project | null>(null);
+
+  const { token } = useAuth();
 
   useEffect(() => {
     const loadProjects = async () => {
@@ -40,7 +43,6 @@ export default function DashboardProject() {
 
   const handleToggleHero = async (id: string, currentHero: boolean) => {
     try {
-      const token = localStorage.getItem("token");
       if (!token) return console.error("JWT manquant");
 
       const res = await fetch(`/api/projects/${id}`, {
