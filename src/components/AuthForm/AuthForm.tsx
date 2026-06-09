@@ -2,11 +2,13 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
 
 import styles from "./style.module.scss";
 
 export default function AuthForm() {
   const router = useRouter();
+  const { setToken } = useAuth();
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -39,9 +41,10 @@ export default function AuthForm() {
         return;
       }
 
-      localStorage.setItem("token", data.token);
+      setToken(data.token);
 
       router.push("/dashboard");
+
     } catch {
       setError("Erreur serveur");
     } finally {
@@ -59,7 +62,6 @@ export default function AuthForm() {
             Nom d&apos;utilisateur
             <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} required className={styles.input} />
           </label>
-
         </div>
 
         <div className={styles.field}>
@@ -67,7 +69,6 @@ export default function AuthForm() {
             Mot de passe
             <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required className={styles.input} />
           </label>
-
         </div>
 
         {error && (
@@ -76,7 +77,7 @@ export default function AuthForm() {
           </div>
         )}
 
-        <button type="submit" disabled={loading} className={styles.button} >
+        <button type="submit" disabled={loading} className={styles.button}>
           {loading ? "Connexion..." : "Se connecter"}
         </button>
       </form>

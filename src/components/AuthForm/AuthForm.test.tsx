@@ -1,5 +1,6 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import AuthForm from "./AuthForm";
+import { AuthContext, AuthContextType } from "@/context/AuthContext";
 
 const pushMock = jest.fn();
 
@@ -9,7 +10,24 @@ jest.mock("next/navigation", () => ({
   }),
 }));
 
-describe("LoginForm", () => {
+describe("AuthForm", () => {
+  const defaultAuthValue: AuthContextType = {
+    token: null,
+    setToken: jest.fn(),
+    logout: jest.fn(),
+    loaded: true,
+  };
+
+  const renderWithAuth = ( ui: React.ReactNode, authValue: Partial<AuthContextType> = {} ) => {
+    const mergedValue: AuthContextType = { ...defaultAuthValue, ...authValue };
+
+    return render(
+      <AuthContext.Provider value={mergedValue}>
+        {ui}
+      </AuthContext.Provider>
+    );
+  };
+
   beforeEach(() => {
     jest.clearAllMocks();
     global.fetch = jest.fn();
@@ -17,7 +35,7 @@ describe("LoginForm", () => {
   });
 
   it("renders the login form", () => {
-    render(<AuthForm />);
+    renderWithAuth(<AuthForm />);
 
     expect(screen.getByText("Connexion admin")).toBeInTheDocument();
     expect(screen.getByLabelText("Nom d'utilisateur")).toBeInTheDocument();
@@ -26,7 +44,7 @@ describe("LoginForm", () => {
   });
 
   it("updates username and password fields", () => {
-    render(<AuthForm />);
+    renderWithAuth(<AuthForm />);
 
     const userInput = screen.getByLabelText("Nom d'utilisateur") as HTMLInputElement;
     const passInput = screen.getByLabelText("Mot de passe") as HTMLInputElement;
@@ -39,6 +57,8 @@ describe("LoginForm", () => {
   });
 
   it("logs in successfully and redirects", async () => {
+    const setTokenMock = jest.fn();
+
     (fetch as jest.Mock).mockResolvedValueOnce({
       json: async () => ({
         success: true,
@@ -46,7 +66,7 @@ describe("LoginForm", () => {
       }),
     });
 
-    render(<AuthForm />);
+    renderWithAuth(<AuthForm />, { setToken: setTokenMock });
 
     fireEvent.change(screen.getByLabelText("Nom d'utilisateur"), {
       target: { value: "admin" },
@@ -59,7 +79,7 @@ describe("LoginForm", () => {
     fireEvent.submit(screen.getByRole("button"));
 
     await waitFor(() => {
-      expect(localStorage.setItem).toHaveBeenCalledWith("token", "abc123");
+      expect(setTokenMock).toHaveBeenCalledWith("abc123");
       expect(pushMock).toHaveBeenCalledWith("/dashboard");
     });
   });
@@ -72,7 +92,7 @@ describe("LoginForm", () => {
       }),
     });
 
-    render(<AuthForm />);
+    renderWithAuth(<AuthForm />);
 
     fireEvent.submit(screen.getByRole("button"));
 
@@ -84,7 +104,7 @@ describe("LoginForm", () => {
   it("shows server error when fetch throws", async () => {
     (fetch as jest.Mock).mockRejectedValueOnce(new Error("Server error"));
 
-    render(<AuthForm />);
+    renderWithAuth(<AuthForm />);
 
     fireEvent.submit(screen.getByRole("button"));
 
@@ -98,7 +118,7 @@ describe("LoginForm", () => {
       json: async () => ({ success: true, token: "abc" }),
     });
 
-    render(<AuthForm />);
+    renderWithAuth(<AuthForm />);
 
     const button = screen.getByRole("button");
 
