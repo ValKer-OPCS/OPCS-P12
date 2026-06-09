@@ -2,16 +2,17 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
 
 import DashboardProject from '@/containers/DashboardProject/DashboardProject'
 
 const DashboardPage = () => {
   const router = useRouter();
   const [checking, setChecking] = useState(true);
+  const { token, setToken } = useAuth();
 
   useEffect(() => {
     const verifyToken = async () => {
-      const token = localStorage.getItem("token");
 
       if (!token) {
         router.replace("/login");
@@ -31,6 +32,7 @@ const DashboardPage = () => {
 
         if (!data.valid) {
           localStorage.removeItem("token");
+          setToken(null);
           router.replace("/login");
           return;
         }
@@ -38,12 +40,13 @@ const DashboardPage = () => {
         setChecking(false);
       } catch {
         localStorage.removeItem("token");
+        setToken(null);
         router.replace("/login");
       }
     };
 
     verifyToken();
-  }, [router]);
+  }, [token, router, setToken]);
 
   if (checking) {
     return null;
