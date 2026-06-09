@@ -31,7 +31,6 @@ const DashboardPage = () => {
         const data = await res.json();
 
         if (!data.valid) {
-          localStorage.removeItem("token");
           setToken(null);
           router.replace("/login");
           return;
@@ -39,7 +38,6 @@ const DashboardPage = () => {
 
         setChecking(false);
       } catch {
-        localStorage.removeItem("token");
         setToken(null);
         router.replace("/login");
       }
