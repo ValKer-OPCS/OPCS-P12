@@ -4,6 +4,7 @@ import "./globals.scss";
 import Header from "@/containers/Header/Header";
 import Footer from "@/containers/Footer/Footer";
 import type { ReactNode } from "react";
+import { AuthProvider } from "@/context/AuthContext";
 
 import { Inter } from "next/font/google";
 
@@ -71,11 +72,13 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className={montserratMono.variable}>
       <body className={inter.variable} >
+      <AuthProvider>
         <div className="app">
           <Header />
           {children}
           <Footer />
         </div>
+      </AuthProvider>
       </body>
     </html>
   );
