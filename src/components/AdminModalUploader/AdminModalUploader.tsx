@@ -5,6 +5,8 @@ import styles from "./style.module.scss";
 import { Project } from "@/types/project";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
+import { useAuth } from "@/context/AuthContext";
+
 
 const slugify = (text: string) =>
   text
@@ -28,6 +30,8 @@ const AdminModalUploader: React.FC<AdminModalUploaderProps> = ({ onClose, onCrea
   const [github, setGithub] = useState("");
   const [demo, setDemo] = useState("");
   const [date, setDate] = useState("");
+  
+  const { token } = useAuth();
 
   const handleTitleChange = (value: string) => {
     setTitle(value);
@@ -37,7 +41,6 @@ const AdminModalUploader: React.FC<AdminModalUploaderProps> = ({ onClose, onCrea
   const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault();
 
-    const token = localStorage.getItem("token");
     if (!token) return console.error("Token manquant");
 
     const res = await fetch("/api/projects", {

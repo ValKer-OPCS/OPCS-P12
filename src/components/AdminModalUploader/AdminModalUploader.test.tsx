@@ -1,6 +1,7 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import AdminModalUploader from "./AdminModalUploader";
 import { Project } from "@/types/project";
+import { AuthContext, AuthContextType } from "@/context/AuthContext";
 
 const pushMock = jest.fn();
 
@@ -18,22 +19,46 @@ describe("AdminModalUploader", () => {
   const onCloseMock = jest.fn();
   const onCreatedMock = jest.fn();
 
+  const defaultAuthValue: AuthContextType = {
+    token: "TOKEN123",
+    setToken: jest.fn(),
+    logout: jest.fn(),
+  };
+
+  const renderWithAuth = (
+    ui: React.ReactNode,
+    authValue: Partial<AuthContextType> = {}
+  ) => {
+    const mergedValue: AuthContextType = {
+      ...defaultAuthValue,
+      ...authValue,
+    };
+
+    return render(
+      <AuthContext.Provider value={mergedValue}>
+        {ui}
+      </AuthContext.Provider>
+    );
+  };
+
   beforeEach(() => {
     jest.clearAllMocks();
     global.fetch = jest.fn();
-    Storage.prototype.getItem = jest.fn();
-    Storage.prototype.setItem = jest.fn();
   });
 
   it("renders the modal", () => {
-    render(<AdminModalUploader onClose={onCloseMock} onCreated={onCreatedMock} />);
+    renderWithAuth(
+      <AdminModalUploader onClose={onCloseMock} onCreated={onCreatedMock} />
+    );
 
     expect(screen.getByText("Créer un projet")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "" })).toBeInTheDocument();
   });
 
   it("updates title and auto-generates slug", () => {
-    render(<AdminModalUploader onClose={onCloseMock} onCreated={onCreatedMock} />);
+    renderWithAuth(
+      <AdminModalUploader onClose={onCloseMock} onCreated={onCreatedMock} />
+    );
 
     const titleInput = screen.getByLabelText("Titre du projet") as HTMLInputElement;
     const slugInput = screen.getByLabelText("Slug") as HTMLInputElement;
@@ -45,8 +70,6 @@ describe("AdminModalUploader", () => {
   });
 
   it("submits form and calls onCreated + onClose on success", async () => {
-    (Storage.prototype.getItem as jest.Mock).mockReturnValue("TOKEN123");
-
     const fakeProject: Project = {
       _id: "1",
       title: "Test",
@@ -73,7 +96,9 @@ describe("AdminModalUploader", () => {
       }),
     });
 
-    render(<AdminModalUploader onClose={onCloseMock} onCreated={onCreatedMock} />);
+    renderWithAuth(
+      <AdminModalUploader onClose={onCloseMock} onCreated={onCreatedMock} />
+    );
 
     fireEvent.change(screen.getByLabelText("Titre du projet"), {
       target: { value: "Test" },
@@ -88,8 +113,6 @@ describe("AdminModalUploader", () => {
   });
 
   it("does not call onCreated when API returns error", async () => {
-    (Storage.prototype.getItem as jest.Mock).mockReturnValue("TOKEN123");
-
     (fetch as jest.Mock).mockResolvedValueOnce({
       json: async () => ({
         success: false,
@@ -97,7 +120,9 @@ describe("AdminModalUploader", () => {
       }),
     });
 
-    render(<AdminModalUploader onClose={onCloseMock} onCreated={onCreatedMock} />);
+    renderWithAuth(
+      <AdminModalUploader onClose={onCloseMock} onCreated={onCreatedMock} />
+    );
 
     fireEvent.submit(screen.getByRole("button", { name: /enregistrer/i }));
 
@@ -110,9 +135,10 @@ describe("AdminModalUploader", () => {
   it("logs error when token is missing", async () => {
     const consoleSpy = jest.spyOn(console, "error").mockImplementation(() => {});
 
-    (Storage.prototype.getItem as jest.Mock).mockReturnValue(null);
-
-    render(<AdminModalUploader onClose={onCloseMock} onCreated={onCreatedMock} />);
+    renderWithAuth(
+      <AdminModalUploader onClose={onCloseMock} onCreated={onCreatedMock} />,
+      { token: null }
+    );
 
     fireEvent.submit(screen.getByRole("button", { name: /enregistrer/i }));
 
@@ -124,7 +150,9 @@ describe("AdminModalUploader", () => {
   });
 
   it("calls onClose when clicking close button", () => {
-    render(<AdminModalUploader onClose={onCloseMock} onCreated={onCreatedMock} />);
+    renderWithAuth(
+      <AdminModalUploader onClose={onCloseMock} onCreated={onCreatedMock} />
+    );
 
     const closeBtn = screen.getByRole("button", { name: "" });
     fireEvent.click(closeBtn);
