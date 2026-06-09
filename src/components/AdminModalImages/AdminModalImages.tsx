@@ -8,6 +8,8 @@ import { Project } from "@/types/project";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash, faTimes } from "@fortawesome/free-solid-svg-icons";
+import { useAuth } from "@/context/AuthContext";
+
 
 type ResponsiveImage = {
   name: string;
@@ -39,20 +41,16 @@ const AdminProjectImagesModal = ({ project, onClose,  onUpdated, }: Props) => {
     project.thumbnail ?? null
   );
 
+  const { token } = useAuth();
+
   const [carousel, setCarousel] = useState<CarouselImage[]>(
     project.carouselImages ?? []
   );
 
   const [loading, setLoading] = useState(false);
 
-  const getToken = () => {
-    return typeof window !== "undefined"
-      ? localStorage.getItem("token")
-      : null;
-  };
-
   const uploadImage = async (file: File, type: "thumbnail" | "carousel" ) => {
-    const token = getToken();
+    
     const formData = new FormData();
     formData.append("file", file);
 
@@ -101,7 +99,6 @@ const AdminProjectImagesModal = ({ project, onClose,  onUpdated, }: Props) => {
   const deleteThumbnail = async () => {
     if (!thumbnail) return;
 
-    const token = getToken();
 
     const res = await fetch(`/api/images/delete?projectId=${project._id}&type=thumbnail`,
       {
@@ -128,7 +125,7 @@ const AdminProjectImagesModal = ({ project, onClose,  onUpdated, }: Props) => {
   };
 
   const deleteCarouselImage = async (image: CarouselImage) => {
-    const token = getToken();
+
 
     const res = await fetch(`/api/images/delete?projectId=${project._id}&type=carousel`,
       {
