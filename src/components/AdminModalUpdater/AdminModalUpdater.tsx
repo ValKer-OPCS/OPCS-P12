@@ -5,9 +5,7 @@ import styles from "./style.module.scss";
 import { Project } from "@/types/project";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
-
-
-
+import { useAuth } from "@/context/AuthContext";
 
 interface AdminModalUpdaterProps {
   project: Project | null;
@@ -16,6 +14,8 @@ interface AdminModalUpdaterProps {
 }
 
 const AdminModalUpdater = ({ project, onClose, onUpdated }: AdminModalUpdaterProps) => {
+
+  const { token } = useAuth();
 
   const [fields, setFields] = useState(() => ({
     title: project?.title ?? "",
@@ -55,7 +55,6 @@ const AdminModalUpdater = ({ project, onClose, onUpdated }: AdminModalUpdaterPro
     setMessage("");
     setStatus("");
 
-    const token = localStorage.getItem("token");
     if (!token) {
       setMessage("Token manquant");
       setStatus("error");

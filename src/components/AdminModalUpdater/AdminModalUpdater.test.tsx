@@ -1,6 +1,7 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import AdminModalUpdater from "./AdminModalUpdater";
 import { Project } from "@/types/project";
+import { AuthContext, AuthContextType } from "@/context/AuthContext";
 
 jest.mock("@fortawesome/react-fontawesome", () => ({
   FontAwesomeIcon: () => <span data-testid="icon" />,
@@ -29,21 +30,44 @@ describe("AdminModalUpdater", () => {
   const onCloseMock = jest.fn();
   const onUpdatedMock = jest.fn();
 
+  const defaultAuthValue: AuthContextType = {
+    token: "TOKEN123",
+    setToken: jest.fn(),
+    logout: jest.fn(),
+  };
+
+  const renderWithAuth = (
+    ui: React.ReactNode,
+    authValue: Partial<AuthContextType> = {}
+  ) => {
+    const mergedValue: AuthContextType = {
+      ...defaultAuthValue,
+      ...authValue,
+    };
+
+    return render(
+      <AuthContext.Provider value={mergedValue}>
+        {ui}
+      </AuthContext.Provider>
+    );
+  };
+
   beforeEach(() => {
     jest.clearAllMocks();
     global.fetch = jest.fn();
-    Storage.prototype.getItem = jest.fn();
   });
 
   it("returns null when project is null", () => {
-    const { container } = render(
+    const { container } = renderWithAuth(
       <AdminModalUpdater project={null} onClose={onCloseMock} onUpdated={onUpdatedMock} />
     );
     expect(container.firstChild).toBeNull();
   });
 
   it("renders form with project values", () => {
-    render(<AdminModalUpdater project={project} onClose={onCloseMock} onUpdated={onUpdatedMock} />);
+    renderWithAuth(
+      <AdminModalUpdater project={project} onClose={onCloseMock} onUpdated={onUpdatedMock} />
+    );
 
     expect(screen.getByDisplayValue("Projet A")).toBeInTheDocument();
     expect(screen.getByDisplayValue("Courte")).toBeInTheDocument();
@@ -54,7 +78,9 @@ describe("AdminModalUpdater", () => {
   });
 
   it("updates fields on change", () => {
-    render(<AdminModalUpdater project={project} onClose={onCloseMock} onUpdated={onUpdatedMock} />);
+    renderWithAuth(
+      <AdminModalUpdater project={project} onClose={onCloseMock} onUpdated={onUpdatedMock} />
+    );
 
     const titleInput = screen.getByLabelText("Titre") as HTMLInputElement;
 
@@ -64,9 +90,10 @@ describe("AdminModalUpdater", () => {
   });
 
   it("shows error when token is missing", async () => {
-    (Storage.prototype.getItem as jest.Mock).mockReturnValue(null);
-
-    render(<AdminModalUpdater project={project} onClose={onCloseMock} onUpdated={onUpdatedMock} />);
+    renderWithAuth(
+      <AdminModalUpdater project={project} onClose={onCloseMock} onUpdated={onUpdatedMock} />,
+      { token: null }
+    );
 
     fireEvent.submit(screen.getByRole("button", { name: /mettre à jour/i }));
 
@@ -76,8 +103,6 @@ describe("AdminModalUpdater", () => {
   });
 
   it("shows API error message", async () => {
-    (Storage.prototype.getItem as jest.Mock).mockReturnValue("TOKEN123");
-
     (fetch as jest.Mock).mockResolvedValueOnce({
       json: async () => ({
         success: false,
@@ -85,7 +110,9 @@ describe("AdminModalUpdater", () => {
       }),
     });
 
-    render(<AdminModalUpdater project={project} onClose={onCloseMock} onUpdated={onUpdatedMock} />);
+    renderWithAuth(
+      <AdminModalUpdater project={project} onClose={onCloseMock} onUpdated={onUpdatedMock} />
+    );
 
     fireEvent.submit(screen.getByRole("button", { name: /mettre à jour/i }));
 
@@ -95,11 +122,11 @@ describe("AdminModalUpdater", () => {
   });
 
   it("shows network error", async () => {
-    (Storage.prototype.getItem as jest.Mock).mockReturnValue("TOKEN123");
-
     (fetch as jest.Mock).mockRejectedValueOnce(new Error("Network error"));
 
-    render(<AdminModalUpdater project={project} onClose={onCloseMock} onUpdated={onUpdatedMock} />);
+    renderWithAuth(
+      <AdminModalUpdater project={project} onClose={onCloseMock} onUpdated={onUpdatedMock} />
+    );
 
     fireEvent.submit(screen.getByRole("button", { name: /mettre à jour/i }));
 
@@ -109,8 +136,6 @@ describe("AdminModalUpdater", () => {
   });
 
   it("calls onUpdated and shows success message", async () => {
-    (Storage.prototype.getItem as jest.Mock).mockReturnValue("TOKEN123");
-
     const updatedProject = {
       ...project,
       title: "Projet modifié",
@@ -124,21 +149,22 @@ describe("AdminModalUpdater", () => {
       }),
     });
 
-    render(<AdminModalUpdater project={project} onClose={onCloseMock} onUpdated={onUpdatedMock} />);
+    renderWithAuth(
+      <AdminModalUpdater project={project} onClose={onCloseMock} onUpdated={onUpdatedMock} />
+    );
 
     fireEvent.submit(screen.getByRole("button", { name: /mettre à jour/i }));
 
     await waitFor(() => {
       expect(screen.getByText("Projet mis à jour")).toBeInTheDocument();
-      expect(onUpdatedMock).toHaveBeenCalledWith({
-        ...updatedProject,
-        date: "2024-01-01",
-      });
+      expect(onUpdatedMock).toHaveBeenCalledWith(updatedProject);
     });
   });
 
   it("calls onClose when clicking close button", () => {
-    render(<AdminModalUpdater project={project} onClose={onCloseMock} onUpdated={onUpdatedMock} />);
+    renderWithAuth(
+      <AdminModalUpdater project={project} onClose={onCloseMock} onUpdated={onUpdatedMock} />
+    );
 
     const closeBtn = screen.getByRole("button", { name: "" });
     fireEvent.click(closeBtn);
