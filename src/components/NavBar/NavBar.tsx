@@ -58,7 +58,7 @@ const NavBar = () => {
       <ul className={styles.navBar}>
         {items.map((item, i) => (
           <li key={i}>
-            <Link href={item.href} onClick={(e) => { if (item.onClick) { e.preventDefault(); item.onClick(); } }} >
+            <Link aria-label={item.label} href={item.href} onClick={(e) => { if (item.onClick) { e.preventDefault(); item.onClick(); } }}  >
               <span className={styles.icon}>
                 <FontAwesomeIcon icon={item.icon} />
               </span>
