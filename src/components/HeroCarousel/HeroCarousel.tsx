@@ -28,7 +28,7 @@ const HeroCarousel = ({ projects, onSelect }: Props) => {
         <div className={styles.carousel}>
             <div className={styles.slide}>
                 <div className={styles.imageWrapper}>
-                    <Image src={current.thumbnail?.original ?? "/placeholder.webp"} fill alt={current.title} className={styles.image} />
+                    <Image src={current.thumbnail?.original ?? "/placeholder.webp"} fill alt={current.title} className={styles.image} loading="lazy" />
                 </div>
 
                 <div className={styles.text}>
