@@ -7,7 +7,7 @@ import aboutMe from '@/data/aboutMe.json'
 const AboutMe = () => {
   return (
     <section data-testid="about-section" id='about' className={styles.aboutContainer}>
-      <Image className={styles.aboutPic} src={ogImage} width={300} height={300} alt='Picture of ValKer' />
+      <Image className={styles.aboutPic} src={ogImage} width={300} height={300} priority fetchPriority="high" alt='Picture of ValKer' />
 
       <div className={styles.aboutText}>
         {aboutMe.text.map((line, index) => (
