@@ -46,7 +46,7 @@ export const POST = async (req: Request) => {
 
     const { success: allowed } = await limiter.limit(ip);
 
-     if (!allowed) {
+    if (!allowed) {
 
       const attempts = await redis.incr(`ban-attempts:${ip}`);
 

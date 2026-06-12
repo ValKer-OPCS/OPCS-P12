@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 import { dbConnect } from "@/lib/db";
 import Project from "@/models/Project";
 import { supabase } from "@/lib/supabase";
+import { projectUpdateSchema } from '@/utils/zodProjectValidation'
 
 export const DELETE = async (req: Request, context: { params: Promise<{ id: string }> }) => {
   const { id } = await context.params;
@@ -69,31 +70,46 @@ export const DELETE = async (req: Request, context: { params: Promise<{ id: stri
   }
 };
 export async function PATCH(req: Request, context: { params: Promise<{ id: string }> }) {
+  await dbConnect();
+
   const { id } = await context.params;
 
+  const body = await req.json();
+
+  const parsed = projectUpdateSchema.safeParse(body);
+  if (!parsed.success) {
+    return NextResponse.json(
+      { success: false, message: "Validation échouée", errors: parsed.error.format() },
+      { status: 400 }
+    );
+  }
+
   try {
-    await dbConnect();
-
-    const body = await req.json();
-
     const updated = await Project.findByIdAndUpdate(
       id,
-      body,
-      { new: true }
+      parsed.data,
+      { returnDocument: "after" }
     );
 
     if (!updated) {
-      return Response.json(
-        { success: false, error: "Project not found" },
+      return NextResponse.json(
+        { success: false, message: "Projet introuvable" },
         { status: 404 }
       );
     }
 
-    return Response.json({ success: true, data: updated });
+    return NextResponse.json({
+      success: true,
+      message: "Projet mis à jour",
+      data: updated
+    });
+
   } catch (err) {
-    console.error("PATCH error:", err);
-    return Response.json({ success: false, error: "PATCH failed" }, { status: 500 });
+    console.error(err);
+    return NextResponse.json(
+      { success: false, message: "Erreur serveur" },
+      { status: 500 }
+    );
   }
 }
-
 
