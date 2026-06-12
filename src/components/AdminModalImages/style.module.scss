@@ -11,6 +11,17 @@
 
 }
 
+.error {
+  color: #b00020;
+  background: #ffe6e6;
+  padding: 10px 14px;
+  border-radius: 6px;
+  margin-bottom: 15px;
+  border: 1px solid #ffb3b3;
+  font-size: 0.9rem;
+}
+
+
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }

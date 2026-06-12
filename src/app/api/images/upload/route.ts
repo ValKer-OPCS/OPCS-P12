@@ -34,8 +34,34 @@ export const POST = async (req: Request) => {
       );
     }
 
+    if (!file || !file.type.startsWith("image/")) {
+      return NextResponse.json(
+        { success: false, message: "Le fichier doit être une image" },
+        { status: 400 }
+      );
+    }
+
+    const allowedExtensions = ["jpg", "jpeg", "png", "webp", "gif"];
+    const ext = file.name.split(".").pop()?.toLowerCase();
+
+    if (!ext || !allowedExtensions.includes(ext)) {
+      return NextResponse.json(
+        { success: false, message: "Extension non autorisée" },
+        { status: 400 }
+      );
+    }
+
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
+
+    try {
+      await sharp(buffer).metadata();
+    } catch {
+      return NextResponse.json(
+        { success: false, message: "Fichier invalide : ce n'est pas une image" },
+        { status: 400 }
+      );
+    }
 
     const filename = Date.now().toString();
 

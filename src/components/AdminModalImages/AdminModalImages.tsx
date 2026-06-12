@@ -10,7 +10,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { useAuth } from "@/context/AuthContext";
 
-
 type ResponsiveImage = {
   name: string;
   width: number;
@@ -36,21 +35,15 @@ type Props = {
   onUpdated: (updated: Project) => void;
 };
 
-const AdminProjectImagesModal = ({ project, onClose,  onUpdated, }: Props) => {
-  const [thumbnail, setThumbnail] = useState<Thumbnail>(
-    project.thumbnail ?? null
-  );
+const AdminProjectImagesModal = ({ project, onClose, onUpdated }: Props) => {
+  const [thumbnail, setThumbnail] = useState<Thumbnail>(project.thumbnail ?? null);
+  const [carousel, setCarousel] = useState<CarouselImage[]>(project.carouselImages ?? []);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const { token } = useAuth();
 
-  const [carousel, setCarousel] = useState<CarouselImage[]>(
-    project.carouselImages ?? []
-  );
-
-  const [loading, setLoading] = useState(false);
-
-  const uploadImage = async (file: File, type: "thumbnail" | "carousel" ) => {
-    
+  const uploadImage = async (file: File, type: "thumbnail" | "carousel") => {
     const formData = new FormData();
     formData.append("file", file);
 
@@ -65,14 +58,23 @@ const AdminProjectImagesModal = ({ project, onClose,  onUpdated, }: Props) => {
       }
     );
 
-    return res.json();
+    const data = await res.json();
+
+    if (!data.success) {
+      setError(data.message || "Erreur inconnue");
+    }
+
+    return data;
   };
 
   const handleThumbnailUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files?.[0]) return;
 
+    setError(null);
     setLoading(true);
+
     const result = await uploadImage(e.target.files[0], "thumbnail");
+
     setLoading(false);
 
     if (result.success) {
@@ -85,8 +87,11 @@ const AdminProjectImagesModal = ({ project, onClose,  onUpdated, }: Props) => {
   const handleCarouselUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files?.[0]) return;
 
+    setError(null);
     setLoading(true);
+
     const result = await uploadImage(e.target.files[0], "carousel");
+
     setLoading(false);
 
     if (result.success) {
@@ -99,9 +104,9 @@ const AdminProjectImagesModal = ({ project, onClose,  onUpdated, }: Props) => {
   const deleteThumbnail = async () => {
     if (!thumbnail) return;
 
+    setError(null);
 
-    const res = await fetch(`/api/images/delete?projectId=${project._id}&type=thumbnail`,
-      {
+    const res = await fetch( `/api/images/delete?projectId=${project._id}&type=thumbnail`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -109,26 +114,26 @@ const AdminProjectImagesModal = ({ project, onClose,  onUpdated, }: Props) => {
         },
         body: JSON.stringify({
           originalPath: thumbnail.originalPath,
-          responsive: thumbnail.responsive
-            ?.map((img) => img.path)
-            .filter(Boolean) ?? [],
+          responsive: thumbnail.responsive?.map((img) => img.path) ?? [],
         }),
       }
     );
 
     const result = await res.json();
 
-    if (result.success) {
-      setThumbnail(null);
-      onUpdated(result.project);
+    if (!result.success) {
+      setError(result.message || "Erreur inconnue");
+      return;
     }
+
+    setThumbnail(null);
+    onUpdated(result.project);
   };
 
   const deleteCarouselImage = async (image: CarouselImage) => {
+    setError(null);
 
-
-    const res = await fetch(`/api/images/delete?projectId=${project._id}&type=carousel`,
-      {
+    const res = await fetch( `/api/images/delete?projectId=${project._id}&type=carousel`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -136,40 +141,40 @@ const AdminProjectImagesModal = ({ project, onClose,  onUpdated, }: Props) => {
         },
         body: JSON.stringify({
           originalPath: image.originalPath,
-          responsive: image.responsive
-            ?.map((img) => img.path)
-            .filter(Boolean) ?? [],
+          responsive: image.responsive?.map((img) => img.path) ?? [],
         }),
       }
     );
 
     const result = await res.json();
 
-    if (result.success) {
-      setCarousel((prev) =>
-        prev.filter((img) => img.originalPath !== image.originalPath)
-      );
-
-      onUpdated(result.project);
+    if (!result.success) {
+      setError(result.message || "Erreur inconnue");
+      return;
     }
+
+    setCarousel((prev) => prev.filter((img) => img.originalPath !== image.originalPath));
+    onUpdated(result.project);
   };
 
   return (
     <div className={styles.overlay}>
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
         <button data-testid="close-button" className={styles.closeButton} onClick={onClose} disabled={loading}>
-            <FontAwesomeIcon icon={faTimes} />
-          </button>
+          <FontAwesomeIcon icon={faTimes} />
+        </button>
+
         <h2>Modifier les images</h2>
 
+        {error && <p className={styles.error}>{error}</p>}
 
         <h3>Thumbnail</h3>
 
         {thumbnail ? (
           <div className={styles.thumbnailWrapper}>
-            <Image src={thumbnail.original} alt="thumbnail" width={300} height={200} className={styles.preview}/>
+            <Image src={thumbnail.original} alt="thumbnail" width={300} height={200} className={styles.preview} />
 
-            <button className={styles.deleteIcon} onClick={deleteThumbnail} >
+            <button className={styles.deleteIcon} onClick={deleteThumbnail}>
               <FontAwesomeIcon icon={faTrash} />
             </button>
           </div>
