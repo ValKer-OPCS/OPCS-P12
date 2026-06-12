@@ -38,8 +38,7 @@ const AdminModalUploader: React.FC<AdminModalUploaderProps> = ({ onClose, onCrea
     setSlug(slugify(value));
   };
 
-  const handleSubmit = async (e: React.SubmitEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (e: React.SubmitEvent) => { e.preventDefault();
 
     if (!token) return console.error("Token manquant");
 
@@ -57,12 +56,13 @@ const AdminModalUploader: React.FC<AdminModalUploaderProps> = ({ onClose, onCrea
         technologies,
         github,
         demo,
-        date
+        date: date ? date : undefined,
+        hero: false
       })
     });
 
     const data = await res.json();
-
+    
     if (data.success) {
       onCreated(data.data);
       onClose();
