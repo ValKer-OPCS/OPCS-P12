@@ -78,9 +78,10 @@ export const POST = async (req: Request) => {
       parsed.data;
 
     if (secondaryEmail && secondaryEmail.length > 0) {
+      await redis.set(`ban:${ip}`, "1", { ex: 2592000 });
       return NextResponse.json(
-        { success: false, message: "Requête invalide." },
-        { status: 400 }
+        { success: true, message: "Email envoyé avec succès." },
+        { status: 201 }
       );
     }
 
