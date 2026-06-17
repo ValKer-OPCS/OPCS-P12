@@ -1,33 +1,72 @@
 export const runtime = "nodejs";
 
 import { NextResponse } from "next/server";
-import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
-export const POST = async (req: Request) => {
+export async function POST(req: Request) {
   const { username, password } = await req.json();
 
   if (username !== process.env.ADMIN_USERNAME) {
     return NextResponse.json(
-      { success: false, message: "Identifiants invalides" },
+      {
+        success: false,
+        message: "Identifiants invalides",
+      },
       { status: 401 }
     );
   }
 
-  const isValidPassword = await bcrypt.compare( password, process.env.ADMIN_PASSWORD!
+  const isValidPassword = await bcrypt.compare(
+    password,
+    process.env.ADMIN_PASSWORD!
   );
 
   if (!isValidPassword) {
     return NextResponse.json(
-      { success: false, message: "Identifiants invalides" },
+      {
+        success: false,
+        message: "Identifiants invalides",
+      },
       { status: 401 }
     );
   }
-  const token = jwt.sign(
+
+  const accessToken = jwt.sign(
     { role: "admin" },
-    process.env.JWT_SECRET!,
-    { expiresIn: "2h" }
+    process.env.ACCESS_TOKEN_SECRET!,
+    {
+      expiresIn: "15m",
+    }
   );
 
-  return NextResponse.json({ success: true, token });
-};
+  const refreshToken = jwt.sign(
+    { role: "admin" },
+    process.env.REFRESH_TOKEN_SECRET!,
+    {
+      expiresIn: "7d",
+    }
+  );
+
+  const response = NextResponse.json({
+    success: true,
+  });
+
+  response.cookies.set("accessToken", accessToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+    path: "/",
+    maxAge: 60 * 15,
+  });
+
+  response.cookies.set("refreshToken", refreshToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+    path: "/",
+    maxAge: 60 * 60 * 24 * 7,
+  });
+
+  return response;
+}
