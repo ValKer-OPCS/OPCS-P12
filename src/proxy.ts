@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import jwt from "jsonwebtoken";
+import jwt, { TokenExpiredError } from "jsonwebtoken";
 
 const publicRoutes = [
   { path: "/api/auth", method: "POST" },
@@ -9,40 +9,72 @@ const publicRoutes = [
 ];
 
 const isPublic = (pathname: string, method: string) =>
-  publicRoutes.some(route => {
+  publicRoutes.some((route) => {
     const matchPath =
       pathname === route.path ||
       pathname.startsWith(route.path + "/");
 
-    const matchMethod =
-      route.method === method;
-
-    return matchPath && matchMethod;
+    return matchPath && route.method === method;
   });
 
-export const proxy = (req: NextRequest) => {
+export async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
-  const method = req.method;
 
-  if (isPublic(pathname, method)) {
+  if (isPublic(pathname, req.method)) {
     return NextResponse.next();
   }
 
-  const authHeader = req.headers.get("authorization");
+  const accessToken = req.cookies.get("accessToken")?.value;
 
-  if (!authHeader?.startsWith("Bearer ")) {
+  if (!accessToken) {
     return new NextResponse("Unauthorized", { status: 401 });
   }
-
-  const token = authHeader.split(" ")[1];
 
   try {
-    jwt.verify(token, process.env.JWT_SECRET!);
+    jwt.verify( accessToken, process.env.ACCESS_TOKEN_SECRET! );
+
     return NextResponse.next();
-  } catch {
-    return new NextResponse("Unauthorized", { status: 401 });
+  } catch (error: unknown) {
+  if (error instanceof TokenExpiredError) {
+      return new NextResponse("Unauthorized", { status: 401 });
+    }
+
+    const refreshToken = req.cookies.get("refreshToken")?.value;
+
+    if (!refreshToken) {
+      return new NextResponse("Unauthorized", { status: 401 });
+    }
+
+    try {
+      const payload = jwt.verify( refreshToken, process.env.REFRESH_TOKEN_SECRET!
+      ) as {
+        role: string;
+      };
+
+      const newAccessToken = jwt.sign(
+         { role: payload.role },
+        process.env.ACCESS_TOKEN_SECRET!,
+        { expiresIn: "15m" }
+      );
+
+      const response = NextResponse.next();
+
+      response.cookies.set("accessToken", newAccessToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        path: "/",
+        maxAge: 60 * 15,
+      });
+
+      return response;
+    } catch {
+      return new NextResponse("Unauthorized", {
+        status: 401,
+      });
+    }
   }
-};
+}
 
 export const config = {
   matcher: ["/api/:path*"],
