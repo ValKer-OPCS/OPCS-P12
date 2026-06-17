@@ -1,7 +1,6 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import AdminModalUpdater from "./AdminModalUpdater";
 import { Project } from "@/types/project";
-import { AuthContext, AuthContextType } from "@/context/AuthContext";
 
 jest.mock("@fortawesome/react-fontawesome", () => ({
   FontAwesomeIcon: () => <span data-testid="icon" />,
@@ -30,42 +29,21 @@ describe("AdminModalUpdater", () => {
   const onCloseMock = jest.fn();
   const onUpdatedMock = jest.fn();
 
-  const defaultAuthValue: AuthContextType = {
-    token: "TOKEN123",
-    setToken: jest.fn(),
-    logout: jest.fn(),
-  };
-
-  const renderWithAuth = (
-    ui: React.ReactNode,
-    authValue: Partial<AuthContextType> = {}
-  ) => {
-    const mergedValue: AuthContextType = {
-      ...defaultAuthValue,
-      ...authValue,
-    };
-
-    return render(
-      <AuthContext.Provider value={mergedValue}>
-        {ui}
-      </AuthContext.Provider>
-    );
-  };
-
   beforeEach(() => {
     jest.clearAllMocks();
     global.fetch = jest.fn();
   });
 
   it("returns null when project is null", () => {
-    const { container } = renderWithAuth(
+    const { container } = render(
       <AdminModalUpdater project={null} onClose={onCloseMock} onUpdated={onUpdatedMock} />
     );
+
     expect(container.firstChild).toBeNull();
   });
 
   it("renders form with project values", () => {
-    renderWithAuth(
+    render(
       <AdminModalUpdater project={project} onClose={onCloseMock} onUpdated={onUpdatedMock} />
     );
 
@@ -78,28 +56,19 @@ describe("AdminModalUpdater", () => {
   });
 
   it("updates fields on change", () => {
-    renderWithAuth(
+    render(
       <AdminModalUpdater project={project} onClose={onCloseMock} onUpdated={onUpdatedMock} />
     );
 
-    const titleInput = screen.getByLabelText("Titre") as HTMLInputElement;
+    const titleInput = screen.getByLabelText(
+      "Titre"
+    ) as HTMLInputElement;
 
-    fireEvent.change(titleInput, { target: { value: "Nouveau titre" } });
+    fireEvent.change(titleInput, {
+      target: { value: "Nouveau titre" },
+    });
 
     expect(titleInput.value).toBe("Nouveau titre");
-  });
-
-  it("shows error when token is missing", async () => {
-    renderWithAuth(
-      <AdminModalUpdater project={project} onClose={onCloseMock} onUpdated={onUpdatedMock} />,
-      { token: null }
-    );
-
-    fireEvent.submit(screen.getByRole("button", { name: /mettre à jour/i }));
-
-    await waitFor(() => {
-      expect(screen.getByText("Token manquant")).toBeInTheDocument();
-    });
   });
 
   it("shows API error message", async () => {
@@ -110,28 +79,74 @@ describe("AdminModalUpdater", () => {
       }),
     });
 
-    renderWithAuth(
+    render(
       <AdminModalUpdater project={project} onClose={onCloseMock} onUpdated={onUpdatedMock} />
     );
 
-    fireEvent.submit(screen.getByRole("button", { name: /mettre à jour/i }));
+    fireEvent.submit(
+      screen.getByRole("button", {
+        name: /mettre à jour/i,
+      })
+    );
 
     await waitFor(() => {
-      expect(screen.getByText("Erreur API")).toBeInTheDocument();
+      expect(
+        screen.getByText("Erreur API")
+      ).toBeInTheDocument();
     });
   });
 
   it("shows network error", async () => {
-    (fetch as jest.Mock).mockRejectedValueOnce(new Error("Network error"));
+    (fetch as jest.Mock).mockRejectedValueOnce(
+      new Error("Network error")
+    );
 
-    renderWithAuth(
+    render(
       <AdminModalUpdater project={project} onClose={onCloseMock} onUpdated={onUpdatedMock} />
     );
 
-    fireEvent.submit(screen.getByRole("button", { name: /mettre à jour/i }));
+    fireEvent.submit(
+      screen.getByRole("button", {
+        name: /mettre à jour/i,
+      })
+    );
 
     await waitFor(() => {
-      expect(screen.getByText("Erreur réseau")).toBeInTheDocument();
+      expect(
+        screen.getByText("Erreur réseau")
+      ).toBeInTheDocument();
+    });
+  });
+
+  it("calls API with credentials include", async () => {
+    (fetch as jest.Mock).mockResolvedValueOnce({
+      json: async () => ({
+        success: true,
+        data: {
+          ...project,
+          date: "2024-01-01",
+        },
+      }),
+    });
+
+    render(
+      <AdminModalUpdater project={project} onClose={onCloseMock} onUpdated={onUpdatedMock} />
+    );
+
+    fireEvent.submit(
+      screen.getByRole("button", {
+        name: /mettre à jour/i,
+      })
+    );
+
+    await waitFor(() => {
+      expect(fetch).toHaveBeenCalledWith(
+        "/api/projects/1",
+        expect.objectContaining({
+          method: "PATCH",
+          credentials: "include",
+        })
+      );
     });
   });
 
@@ -149,25 +164,36 @@ describe("AdminModalUpdater", () => {
       }),
     });
 
-    renderWithAuth(
+    render(
       <AdminModalUpdater project={project} onClose={onCloseMock} onUpdated={onUpdatedMock} />
     );
 
-    fireEvent.submit(screen.getByRole("button", { name: /mettre à jour/i }));
+    fireEvent.submit(
+      screen.getByRole("button", {
+        name: /mettre à jour/i,
+      })
+    );
 
     await waitFor(() => {
-      expect(screen.getByText("Projet mis à jour")).toBeInTheDocument();
-      expect(onUpdatedMock).toHaveBeenCalledWith(updatedProject);
+      expect(
+        screen.getByText("Projet mis à jour")
+      ).toBeInTheDocument();
+
+      expect(onUpdatedMock).toHaveBeenCalledWith({
+        ...updatedProject,
+        date: "2024-01-01",
+      });
     });
   });
 
   it("calls onClose when clicking close button", () => {
-    renderWithAuth(
+    render(
       <AdminModalUpdater project={project} onClose={onCloseMock} onUpdated={onUpdatedMock} />
     );
 
-    const closeBtn = screen.getByRole("button", { name: "" });
-    fireEvent.click(closeBtn);
+    fireEvent.click(
+      screen.getByTestId("close-button")
+    );
 
     expect(onCloseMock).toHaveBeenCalled();
   });

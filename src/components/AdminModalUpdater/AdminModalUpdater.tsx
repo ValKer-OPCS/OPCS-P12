@@ -5,7 +5,6 @@ import styles from "./style.module.scss";
 import { Project } from "@/types/project";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
-import { useAuth } from "@/context/AuthContext";
 
 interface AdminModalUpdaterProps {
   project: Project | null;
@@ -15,7 +14,6 @@ interface AdminModalUpdaterProps {
 
 const AdminModalUpdater = ({ project, onClose, onUpdated }: AdminModalUpdaterProps) => {
 
-  const { token } = useAuth();
 
   const [fields, setFields] = useState(() => ({
     title: project?.title ?? "",
@@ -50,16 +48,10 @@ const AdminModalUpdater = ({ project, onClose, onUpdated }: AdminModalUpdaterPro
     }
   };
 
-  const handleUpdate = async (e: React.SubmitEvent) => {
+  const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     setMessage("");
     setStatus("");
-
-    if (!token) {
-      setMessage("Token manquant");
-      setStatus("error");
-      return;
-    }
 
     const body: Record<string, unknown> = {};
 
@@ -83,9 +75,9 @@ const AdminModalUpdater = ({ project, onClose, onUpdated }: AdminModalUpdaterPro
     try {
       const res = await fetch(`/api/projects/${project._id}`, {
         method: "PATCH",
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(body),
       });
@@ -113,11 +105,12 @@ const AdminModalUpdater = ({ project, onClose, onUpdated }: AdminModalUpdaterPro
     }
   };
 
+
   return (
     <div className={styles.overlay}>
       <form className={styles.updateForm} onClick={(e) => e.stopPropagation()} onSubmit={handleUpdate} >
 
-        <button type="button" className={styles.closeButton} onClick={onClose}>
+        <button data-testid="close-button" type="button" className={styles.closeButton} onClick={onClose}>
           <FontAwesomeIcon icon={faTimes} />
         </button>
 
