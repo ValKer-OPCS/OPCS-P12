@@ -1,7 +1,6 @@
 "use client";
 
 import styles from "./style.module.scss";
-import { useAuth } from "@/context/AuthContext";
 
 type ModalConfirmProps = {
   open: boolean;
@@ -13,21 +12,20 @@ type ModalConfirmProps = {
 };
 
 const AdminModalDelete = ({ open, projectId, onSuccess, onCancel }: ModalConfirmProps) => {
-  const { token } = useAuth();
 
   if (!open || !projectId) return null;
 
   const handleConfirm = async () => {
-    try {      
-
-      if (!token) return console.error("JWT manquant");
-
-      await fetch(`/api/projects/${projectId}`, {
+    try {
+      const res = await fetch(`/api/projects/${projectId}`, {
         method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        credentials: "include",
       });
+
+      if (!res.ok) {
+        console.error("Erreur suppression");
+        return;
+      }
 
       onSuccess(projectId);
     } catch (err) {
