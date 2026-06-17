@@ -1,20 +1,30 @@
-export const runtime = "nodejs";
-
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
 
-export const POST = async (req: Request) => {
+export async function GET(req: NextRequest) {
   try {
-    const { token } = await req.json();
+    const accessToken =
+      req.cookies.get("accessToken")?.value;
 
-    if (!token) {
-      return NextResponse.json({ valid: false }, { status: 400 });
+    if (!accessToken) {
+      return NextResponse.json(
+        { authenticated: false },
+        { status: 401 }
+      );
     }
 
-    jwt.verify(token, process.env.JWT_SECRET!);
+    jwt.verify(
+      accessToken,
+      process.env.ACCESS_TOKEN_SECRET!
+    );
 
-    return NextResponse.json({ valid: true });
+    return NextResponse.json({
+      authenticated: true,
+    });
   } catch {
-    return NextResponse.json({ valid: false }, { status: 401 });
+    return NextResponse.json(
+      { authenticated: false },
+      { status: 401 }
+    );
   }
-};
+}
