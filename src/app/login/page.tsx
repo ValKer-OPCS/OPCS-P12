@@ -3,47 +3,35 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import AuthForm from "@/components/AuthForm/AuthForm";
-import { useAuth } from "@/context/AuthContext";
 
 const LoginPage = () => {
   const router = useRouter();
-  const { token, setToken, loaded } = useAuth();
   const [checking, setChecking] = useState(true);
 
   useEffect(() => {
-    if (!loaded) return;
-    const checkToken = async () => {
-      if (!token) {
-        setChecking(false);
-        return;
-      }
-
+    const checkAuth = async () => {
       try {
         const res = await fetch("/api/auth/verify", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ token }),
+          method: "GET",
+          credentials: "include",
         });
 
-        const data = await res.json();
-
-        if (data.valid) {
-          router.replace("/dashboard");
-          return;
+        if (res.ok) {
+          const data = await res.json();
+          if (data.authenticated) {
+            router.replace("/dashboard");
+            return;
+          }
         }
+      } catch {}
 
-        setToken(null);
-        setChecking(false);
-      } catch {
-        setToken(null);
-        setChecking(false);
-      }
+      setChecking(false);
     };
 
-    checkToken();
-  }, [loaded, token, router, setToken]);
+    checkAuth();
+  }, [router]);
 
-  if (!loaded || checking) return null;
+  if (checking) return null;
 
   return <AuthForm />;
 };
