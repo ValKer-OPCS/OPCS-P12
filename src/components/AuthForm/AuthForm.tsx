@@ -2,13 +2,10 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/context/AuthContext";
-
 import styles from "./style.module.scss";
 
 export default function AuthForm() {
   const router = useRouter();
-  const { setToken } = useAuth();
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -16,7 +13,7 @@ export default function AuthForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const handleLogin = async (e: React.SubmitEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
     setLoading(true);
@@ -25,13 +22,14 @@ export default function AuthForm() {
     try {
       const res = await fetch("/api/auth/login", {
         method: "POST",
+        credentials: "include",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           username,
-          password
-        })
+          password,
+        }),
       });
 
       const data = await res.json();
@@ -40,8 +38,6 @@ export default function AuthForm() {
         setError(data.message);
         return;
       }
-
-      setToken(data.token);
 
       router.push("/dashboard");
 
@@ -60,22 +56,30 @@ export default function AuthForm() {
         <div className={styles.field}>
           <label className={styles.label}>
             Nom d&apos;utilisateur
-            <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} required className={styles.input} />
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+              className={styles.input}
+            />
           </label>
         </div>
 
         <div className={styles.field}>
           <label className={styles.label}>
             Mot de passe
-            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required className={styles.input} />
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className={styles.input}
+            />
           </label>
         </div>
 
-        {error && (
-          <div className={styles.error}>
-            {error}
-          </div>
-        )}
+        {error && <div className={styles.error}>{error}</div>}
 
         <button type="submit" disabled={loading} className={styles.button}>
           {loading ? "Connexion..." : "Se connecter"}
