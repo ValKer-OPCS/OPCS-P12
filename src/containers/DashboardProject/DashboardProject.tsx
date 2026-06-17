@@ -8,7 +8,6 @@ import AdminModalUploader from "../../components/AdminModalUploader/AdminModalUp
 import AdminModalImages from "../../components/AdminModalImages/AdminModalImages";
 import styles from "./style.module.scss";
 import { Project } from "@/types/project";
-import { useAuth } from "@/context/AuthContext";
 
 export default function DashboardProject() {
   const [projects, setProjects] = useState<Project[]>([]);
@@ -25,7 +24,6 @@ export default function DashboardProject() {
   const [modalImagesOpen, setModalImagesOpen] = useState(false);
   const [projectToEditImages, setProjectToEditImages] = useState<Project | null>(null);
 
-  const { token } = useAuth();
 
   useEffect(() => {
     const loadProjects = async () => {
@@ -43,14 +41,13 @@ export default function DashboardProject() {
 
   const handleToggleHero = async (id: string, currentHero: boolean) => {
     try {
-      if (!token) return console.error("JWT manquant");
 
       const res = await fetch(`/api/projects/${id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
+        credentials: "include",
         body: JSON.stringify({ hero: !currentHero }),
       });
 
@@ -116,21 +113,22 @@ export default function DashboardProject() {
         ))}
       </div>
 
-      <AdminModalDelete open={modalDeleteOpen} projectId={projectToDelete} onCancel={() => setModalDeleteOpen(false)} onSuccess={handleDeleteSuccess}/>
+      <AdminModalDelete open={modalDeleteOpen} projectId={projectToDelete} onCancel={() => setModalDeleteOpen(false)} onSuccess={handleDeleteSuccess} />
 
       {modalUpdateOpen && projectToUpdate && (
         <AdminModalUpdater project={projectToUpdate} onClose={() => setModalUpdateOpen(false)} onUpdated={(updated) => {
-            setProjects((prev) =>
-              prev.map((p) => (p._id === updated._id ? updated : p))
-            );
-            setModalUpdateOpen(false);
-          }}
+          setProjects((prev) =>
+            prev.map((p) => (p._id === updated._id ? updated : p))
+          );
+          setModalUpdateOpen(false);
+        }}
         />
       )}
 
       {modalCreateOpen && (
         <AdminModalUploader onClose={() => setModalCreateOpen(false)} onCreated={(newProject) => {
-            setProjects((prev) => [newProject, ...prev]); setModalCreateOpen(false); }} />
+          setProjects((prev) => [newProject, ...prev]); setModalCreateOpen(false);
+        }} />
       )}
 
       {modalImagesOpen && projectToEditImages && (
