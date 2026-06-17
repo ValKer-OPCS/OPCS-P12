@@ -2,64 +2,49 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/context/AuthContext";
 
-import DashboardProject from '@/containers/DashboardProject/DashboardProject'
+import DashboardProject from "@/containers/DashboardProject/DashboardProject";
 
 const DashboardPage = () => {
   const router = useRouter();
   const [checking, setChecking] = useState(true);
-  const { token, setToken } = useAuth();
 
   useEffect(() => {
-    const verifyToken = async () => {
-
-      if (!token) {
-        router.replace("/login");
-        return;
-      }
-
+    const checkAuth = async () => {
       try {
         const res = await fetch("/api/auth/verify", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ token })
+          method: "GET",
+          credentials: "include",
         });
+
+        if (!res.ok) {
+          router.replace("/login");
+          return;
+        }
 
         const data = await res.json();
 
-        if (!data.valid) {
-          setToken(null);
+        if (!data.authenticated) {
           router.replace("/login");
           return;
         }
 
         setChecking(false);
       } catch {
-        setToken(null);
         router.replace("/login");
       }
     };
 
-    verifyToken();
-  }, [token, router, setToken]);
+    checkAuth();
+  }, [router]);
 
-  if (checking) {
-    return null;
-  }
+  if (checking) return null;
 
   return (
     <div>
-
-
       <DashboardProject />
-
-
-
     </div>
-  )
+  );
 };
 
 export default DashboardPage;
