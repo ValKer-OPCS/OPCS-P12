@@ -1,15 +1,6 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import AdminModalUploader from "./AdminModalUploader";
 import { Project } from "@/types/project";
-import { AuthContext, AuthContextType } from "@/context/AuthContext";
-
-const pushMock = jest.fn();
-
-jest.mock("next/navigation", () => ({
-  useRouter: () => ({
-    push: pushMock,
-  }),
-}));
 
 jest.mock("@fortawesome/react-fontawesome", () => ({
   FontAwesomeIcon: () => <span data-testid="icon" />,
@@ -19,57 +10,34 @@ describe("AdminModalUploader", () => {
   const onCloseMock = jest.fn();
   const onCreatedMock = jest.fn();
 
-  const defaultAuthValue: AuthContextType = {
-    token: "TOKEN123",
-    setToken: jest.fn(),
-    logout: jest.fn(),
-  };
-
-  const renderWithAuth = (
-    ui: React.ReactNode,
-    authValue: Partial<AuthContextType> = {}
-  ) => {
-    const mergedValue: AuthContextType = {
-      ...defaultAuthValue,
-      ...authValue,
-    };
-
-    return render(
-      <AuthContext.Provider value={mergedValue}>
-        {ui}
-      </AuthContext.Provider>
-    );
-  };
-
   beforeEach(() => {
     jest.clearAllMocks();
     global.fetch = jest.fn();
   });
 
   it("renders the modal", () => {
-    renderWithAuth(
+    render(
       <AdminModalUploader onClose={onCloseMock} onCreated={onCreatedMock} />
     );
 
     expect(screen.getByText("Créer un projet")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "" })).toBeInTheDocument();
+    expect(screen.getByTestId("close-button")).toBeInTheDocument();
   });
 
   it("updates title and auto-generates slug", () => {
-    renderWithAuth(
+    render(
       <AdminModalUploader onClose={onCloseMock} onCreated={onCreatedMock} />
     );
 
     const titleInput = screen.getByLabelText("Titre du projet") as HTMLInputElement;
     const slugInput = screen.getByLabelText("Slug") as HTMLInputElement;
 
-    fireEvent.change(titleInput, { target: { value: "Mon Projet Test" } });
-
+    fireEvent.change(titleInput, { target: { value: "Mon Projet Test" }, });
     expect(titleInput.value).toBe("Mon Projet Test");
     expect(slugInput.value).toBe("mon-projet-test");
   });
 
-  it("submits form and calls onCreated + onClose on success", async () => {
+  it("submits form and calls API with credentials include", async () => {
     const fakeProject: Project = {
       _id: "1",
       title: "Test",
@@ -96,15 +64,94 @@ describe("AdminModalUploader", () => {
       }),
     });
 
-    renderWithAuth(
+    render(
       <AdminModalUploader onClose={onCloseMock} onCreated={onCreatedMock} />
     );
 
-    fireEvent.change(screen.getByLabelText("Titre du projet"), {
-      target: { value: "Test" },
+    fireEvent.change(screen.getByLabelText("Titre du projet"),
+      {
+        target: { value: "Test" },
+      }
+    );
+
+    fireEvent.change(screen.getByLabelText("Courte description"),
+      {
+        target: { value: "Description courte" },
+      }
+    );
+
+    fireEvent.change(screen.getByLabelText("Longue description"),
+      {
+        target: { value: "Description longue" },
+      }
+    );
+
+    fireEvent.submit(screen.getByRole("button", { name: /enregistrer/i, }));
+
+    await waitFor(() => {
+      expect(fetch).toHaveBeenCalledWith(
+        "/api/projects",
+        expect.objectContaining({
+          method: "POST",
+          credentials: "include",
+        })
+      );
+    });
+  });
+
+  it("calls onCreated and onClose on success", async () => {
+    const fakeProject: Project = {
+      _id: "1",
+      title: "Test",
+      slug: "test",
+      shortDescription: "",
+      longDescription: "",
+      technologies: [],
+      github: "",
+      demo: "",
+      date: 2024,
+      hero: false,
+      thumbnail: {
+        original: "/img.webp",
+        originalPath: "/img.webp",
+        responsive: [],
+      },
+      carouselImages: [],
+    };
+
+    (fetch as jest.Mock).mockResolvedValueOnce({
+      json: async () => ({
+        success: true,
+        data: fakeProject,
+      }),
     });
 
-    fireEvent.submit(screen.getByRole("button", { name: /enregistrer/i }));
+    render(
+      <AdminModalUploader onClose={onCloseMock} onCreated={onCreatedMock} />
+    );
+
+    fireEvent.change(screen.getByLabelText("Titre du projet"),
+      {
+        target: { value: "Test" },
+      }
+    );
+
+    fireEvent.change(screen.getByLabelText("Courte description"),
+      {
+        target: { value: "Description courte" },
+      }
+    );
+
+    fireEvent.change(screen.getByLabelText("Longue description"),
+      {
+        target: { value: "Description longue" },
+      }
+    );
+
+    fireEvent.submit(screen.getByRole("button", {
+      name: /enregistrer/i,
+    })
+    );
 
     await waitFor(() => {
       expect(onCreatedMock).toHaveBeenCalledWith(fakeProject);
@@ -120,11 +167,32 @@ describe("AdminModalUploader", () => {
       }),
     });
 
-    renderWithAuth(
+    render(
       <AdminModalUploader onClose={onCloseMock} onCreated={onCreatedMock} />
     );
 
-    fireEvent.submit(screen.getByRole("button", { name: /enregistrer/i }));
+    fireEvent.change(screen.getByLabelText("Titre du projet"),
+      {
+        target: { value: "Test" },
+      }
+    );
+
+    fireEvent.change(screen.getByLabelText("Courte description"),
+      {
+        target: { value: "Description courte" },
+      }
+    );
+
+    fireEvent.change(screen.getByLabelText("Longue description"),
+      {
+        target: { value: "Description longue" },
+      }
+    );
+
+    fireEvent.submit(screen.getByRole("button", {
+      name: /enregistrer/i,
+    })
+    );
 
     await waitFor(() => {
       expect(onCreatedMock).not.toHaveBeenCalled();
@@ -132,30 +200,13 @@ describe("AdminModalUploader", () => {
     });
   });
 
-  it("logs error when token is missing", async () => {
-    const consoleSpy = jest.spyOn(console, "error").mockImplementation(() => {});
-
-    renderWithAuth(
-      <AdminModalUploader onClose={onCloseMock} onCreated={onCreatedMock} />,
-      { token: null }
-    );
-
-    fireEvent.submit(screen.getByRole("button", { name: /enregistrer/i }));
-
-    await waitFor(() => {
-      expect(consoleSpy).toHaveBeenCalledWith("Token manquant");
-    });
-
-    consoleSpy.mockRestore();
-  });
-
   it("calls onClose when clicking close button", () => {
-    renderWithAuth(
+    render(
       <AdminModalUploader onClose={onCloseMock} onCreated={onCreatedMock} />
     );
 
-    const closeBtn = screen.getByRole("button", { name: "" });
-    fireEvent.click(closeBtn);
+    fireEvent.click(screen.getByTestId("close-button")
+    );
 
     expect(onCloseMock).toHaveBeenCalled();
   });

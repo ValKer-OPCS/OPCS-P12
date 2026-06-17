@@ -5,7 +5,6 @@ import styles from "./style.module.scss";
 import { Project } from "@/types/project";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
-import { useAuth } from "@/context/AuthContext";
 
 
 const slugify = (text: string) =>
@@ -30,23 +29,21 @@ const AdminModalUploader: React.FC<AdminModalUploaderProps> = ({ onClose, onCrea
   const [github, setGithub] = useState("");
   const [demo, setDemo] = useState("");
   const [date, setDate] = useState("");
-  
-  const { token } = useAuth();
+
 
   const handleTitleChange = (value: string) => {
     setTitle(value);
     setSlug(slugify(value));
   };
 
-  const handleSubmit = async (e: React.SubmitEvent) => { e.preventDefault();
-
-    if (!token) return console.error("Token manquant");
+  const handleSubmit = async (e: React.SubmitEvent) => {
+    e.preventDefault();
 
     const res = await fetch("/api/projects", {
       method: "POST",
+      credentials: "include",
       headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         title,
@@ -57,12 +54,12 @@ const AdminModalUploader: React.FC<AdminModalUploaderProps> = ({ onClose, onCrea
         github,
         demo,
         date: date ? date : undefined,
-        hero: false
-      })
+        hero: false,
+      }),
     });
 
     const data = await res.json();
-    
+
     if (data.success) {
       onCreated(data.data);
       onClose();
@@ -74,7 +71,7 @@ const AdminModalUploader: React.FC<AdminModalUploaderProps> = ({ onClose, onCrea
       <div className={styles.uploader} onClick={(e) => e.stopPropagation()}>
         <div className={styles.header}>
           <h2>Créer un projet</h2>
-          <button className={styles.closeBtn} onClick={onClose}>
+          <button data-testid="close-button" className={styles.closeBtn} onClick={onClose}>
             <FontAwesomeIcon icon={faTimes} />
           </button>
         </div>
@@ -102,7 +99,7 @@ const AdminModalUploader: React.FC<AdminModalUploaderProps> = ({ onClose, onCrea
 
           <label>
             Technologies (séparées par des virgules)
-            <input type="text" onChange={(e) => setTechnologies(e.target.value.split(",").map((t) => t.trim())) }/>
+            <input type="text" onChange={(e) => setTechnologies(e.target.value.split(",").map((t) => t.trim()))} />
           </label>
 
           <label>
