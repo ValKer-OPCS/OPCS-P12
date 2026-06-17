@@ -4,9 +4,7 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import AdminProjectImagesModal from "./AdminModalImages";
 import { Project } from "@/types/project";
-import { AuthContext, AuthContextType } from "@/context/AuthContext";
 
-// Mock Next/Image
 jest.mock("next/image", () => ({
   __esModule: true,
   default: (props: React.ImgHTMLAttributes<HTMLImageElement>) => (
@@ -14,7 +12,6 @@ jest.mock("next/image", () => ({
   ),
 }));
 
-// Mock FontAwesome
 jest.mock("@fortawesome/react-fontawesome", () => ({
   FontAwesomeIcon: () => <span data-testid="icon" />,
 }));
@@ -48,48 +45,28 @@ describe("AdminProjectImagesModal", () => {
   const onCloseMock = jest.fn();
   const onUpdatedMock = jest.fn();
 
-  const defaultAuthValue: AuthContextType = {
-    token: "TOKEN123",
-    setToken: jest.fn(),
-    logout: jest.fn(),
-  };
-
-  const renderWithAuth = (
-    ui: React.ReactNode,
-    authValue: Partial<AuthContextType> = {}
-  ) => {
-    const mergedValue: AuthContextType = {
-      ...defaultAuthValue,
-      ...authValue,
-    };
-
-    return render(
-      <AuthContext.Provider value={mergedValue}>
-        {ui}
-      </AuthContext.Provider>
-    );
-  };
-
   beforeEach(() => {
     jest.clearAllMocks();
     global.fetch = jest.fn();
   });
 
   it("renders thumbnail and carousel images", () => {
-    renderWithAuth(
+    render(
       <AdminProjectImagesModal project={project} onClose={onCloseMock} onUpdated={onUpdatedMock} />
     );
 
     expect(screen.getByAltText("thumbnail")).toBeInTheDocument();
+
     expect(screen.getByAltText("carousel-0")).toBeInTheDocument();
   });
 
   it("calls onClose when clicking close button", () => {
-    renderWithAuth(
-      <AdminProjectImagesModal project={project} onClose={onCloseMock} onUpdated={onUpdatedMock} />
+    render(
+      <AdminProjectImagesModal project={project} onClose={onCloseMock} onUpdated={onUpdatedMock}/>
     );
 
-    fireEvent.click(screen.getByTestId("close-button"));
+    fireEvent.click(screen.getByTestId("close-button") );
+
     expect(onCloseMock).toHaveBeenCalled();
   });
 
@@ -110,22 +87,79 @@ describe("AdminProjectImagesModal", () => {
       }),
     });
 
-    renderWithAuth(
+    render(
       <AdminProjectImagesModal project={project} onClose={onCloseMock} onUpdated={onUpdatedMock} />
     );
 
-    const file = new File(["test"], "image.webp", { type: "image/webp" });
-    const input = screen.getByTestId("thumbnail-input");
+    const file = new File(
+      ["test"],
+      "image.webp",
+      { type: "image/webp" }
+    );
 
-    fireEvent.change(input, { target: { files: [file] } });
+    fireEvent.change(
+      screen.getByTestId("thumbnail-input"),
+      {
+        target: {
+          files: [file],
+        },
+      }
+    );
 
     await waitFor(() => {
-      expect(onUpdatedMock).toHaveBeenCalledWith(updatedProject);
+      expect(fetch).toHaveBeenCalledWith(
+        "/api/images/upload?projectId=1&type=thumbnail",
+        expect.objectContaining({
+          method: "POST",
+          credentials: "include",
+        })
+      );
+
+      expect(onUpdatedMock).toHaveBeenCalledWith(
+        updatedProject
+      );
     });
   });
 
+  it("shows error when upload fails", async () => {
+    (fetch as jest.Mock).mockResolvedValueOnce({
+      json: async () => ({
+        success: false,
+        message: "Erreur upload",
+      }),
+    });
+
+    render(
+      <AdminProjectImagesModal project={project} onClose={onCloseMock} onUpdated={onUpdatedMock} /> 
+    );
+
+    const file = new File(
+      ["test"],
+      "image.webp",
+      { type: "image/webp" }
+    );
+
+    fireEvent.change(
+      screen.getByTestId("thumbnail-input"),
+      {
+        target: {
+          files: [file],
+        },
+      }
+    );
+
+    expect(
+      await screen.findByText("Erreur upload")
+    ).toBeInTheDocument();
+
+    expect(onUpdatedMock).not.toHaveBeenCalled();
+  });
+
   it("deletes thumbnail and updates project", async () => {
-    const updatedProject = { ...project, thumbnail: null };
+    const updatedProject = {
+      ...project,
+      thumbnail: null,
+    };
 
     (fetch as jest.Mock).mockResolvedValueOnce({
       json: async () => ({
@@ -134,19 +168,34 @@ describe("AdminProjectImagesModal", () => {
       }),
     });
 
-    renderWithAuth(
+    render(
       <AdminProjectImagesModal project={project} onClose={onCloseMock} onUpdated={onUpdatedMock} />
     );
 
-    fireEvent.click(screen.getAllByTestId("icon")[1]);
+    fireEvent.click(
+      screen.getByTestId("delete-thumbnail")
+    );
 
     await waitFor(() => {
-      expect(onUpdatedMock).toHaveBeenCalledWith(updatedProject);
+      expect(fetch).toHaveBeenCalledWith(
+        "/api/images/delete?projectId=1&type=thumbnail",
+        expect.objectContaining({
+          method: "DELETE",
+          credentials: "include",
+        })
+      );
+
+      expect(onUpdatedMock).toHaveBeenCalledWith(
+        updatedProject
+      );
     });
   });
 
   it("deletes carousel image and updates project", async () => {
-    const updatedProject = { ...project, carouselImages: [] };
+    const updatedProject = {
+      ...project,
+      carouselImages: [],
+    };
 
     (fetch as jest.Mock).mockResolvedValueOnce({
       json: async () => ({
@@ -155,14 +204,49 @@ describe("AdminProjectImagesModal", () => {
       }),
     });
 
-    renderWithAuth(
+    render(
       <AdminProjectImagesModal project={project} onClose={onCloseMock} onUpdated={onUpdatedMock} />
     );
 
-    fireEvent.click(screen.getAllByTestId("icon")[2]);
+    fireEvent.click(
+      screen.getByTestId("delete-carousel-0")
+    );
 
     await waitFor(() => {
-      expect(onUpdatedMock).toHaveBeenCalledWith(updatedProject);
+      expect(fetch).toHaveBeenCalledWith(
+        "/api/images/delete?projectId=1&type=carousel",
+        expect.objectContaining({
+          method: "DELETE",
+          credentials: "include",
+        })
+      );
+
+      expect(onUpdatedMock).toHaveBeenCalledWith(
+        updatedProject
+      );
     });
+  });
+
+  it("shows error when thumbnail deletion fails", async () => {
+    (fetch as jest.Mock).mockResolvedValueOnce({
+      json: async () => ({
+        success: false,
+        message: "Erreur suppression",
+      }),
+    });
+
+    render(
+      <AdminProjectImagesModal project={project} onClose={onCloseMock} onUpdated={onUpdatedMock} />
+    );
+
+    fireEvent.click(
+      screen.getByTestId("delete-thumbnail")
+    );
+
+    expect(
+      await screen.findByText("Erreur suppression")
+    ).toBeInTheDocument();
+
+    expect(onUpdatedMock).not.toHaveBeenCalled();
   });
 });

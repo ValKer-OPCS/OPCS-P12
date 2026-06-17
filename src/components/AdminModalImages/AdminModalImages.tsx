@@ -8,7 +8,6 @@ import { Project } from "@/types/project";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash, faTimes } from "@fortawesome/free-solid-svg-icons";
-import { useAuth } from "@/context/AuthContext";
 
 type ResponsiveImage = {
   name: string;
@@ -41,7 +40,6 @@ const AdminProjectImagesModal = ({ project, onClose, onUpdated }: Props) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const { token } = useAuth();
 
   const uploadImage = async (file: File, type: "thumbnail" | "carousel") => {
     const formData = new FormData();
@@ -51,12 +49,11 @@ const AdminProjectImagesModal = ({ project, onClose, onUpdated }: Props) => {
       `/api/images/upload?projectId=${project._id}&type=${type}`,
       {
         method: "POST",
-        headers: {
-          Authorization: token ? `Bearer ${token}` : "",
-        },
+        credentials: "include",
         body: formData,
       }
     );
+
 
     const data = await res.json();
 
@@ -106,11 +103,13 @@ const AdminProjectImagesModal = ({ project, onClose, onUpdated }: Props) => {
 
     setError(null);
 
-    const res = await fetch( `/api/images/delete?projectId=${project._id}&type=thumbnail`, {
+    const res = await fetch(
+      `/api/images/delete?projectId=${project._id}&type=thumbnail`,
+      {
         method: "DELETE",
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
-          Authorization: token ? `Bearer ${token}` : "",
         },
         body: JSON.stringify({
           originalPath: thumbnail.originalPath,
@@ -118,6 +117,7 @@ const AdminProjectImagesModal = ({ project, onClose, onUpdated }: Props) => {
         }),
       }
     );
+
 
     const result = await res.json();
 
@@ -133,11 +133,13 @@ const AdminProjectImagesModal = ({ project, onClose, onUpdated }: Props) => {
   const deleteCarouselImage = async (image: CarouselImage) => {
     setError(null);
 
-    const res = await fetch( `/api/images/delete?projectId=${project._id}&type=carousel`, {
+    const res = await fetch(
+      `/api/images/delete?projectId=${project._id}&type=carousel`,
+      {
         method: "DELETE",
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
-          Authorization: token ? `Bearer ${token}` : "",
         },
         body: JSON.stringify({
           originalPath: image.originalPath,
@@ -145,6 +147,7 @@ const AdminProjectImagesModal = ({ project, onClose, onUpdated }: Props) => {
         }),
       }
     );
+
 
     const result = await res.json();
 
@@ -174,7 +177,7 @@ const AdminProjectImagesModal = ({ project, onClose, onUpdated }: Props) => {
           <div className={styles.thumbnailWrapper}>
             <Image src={thumbnail.original} alt="thumbnail" width={300} height={200} className={styles.preview} />
 
-            <button className={styles.deleteIcon} onClick={deleteThumbnail}>
+            <button data-testid="delete-thumbnail" className={styles.deleteIcon} onClick={deleteThumbnail}>
               <FontAwesomeIcon icon={faTrash} />
             </button>
           </div>
@@ -194,7 +197,7 @@ const AdminProjectImagesModal = ({ project, onClose, onUpdated }: Props) => {
               <div className={styles.imageWrapper}>
                 <Image src={img.original} alt={`carousel-${i}`} width={200} height={200} className={styles.carouselImage} />
 
-                <button className={styles.deleteIcon} onClick={() => deleteCarouselImage(img)}>
+                <button data-testid={`delete-carousel-${i}`} className={styles.deleteIcon} onClick={() => deleteCarouselImage(img)}>
                   <FontAwesomeIcon icon={faTrash} />
                 </button>
               </div>
