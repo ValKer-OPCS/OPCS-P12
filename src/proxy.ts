@@ -31,11 +31,12 @@ export async function proxy(req: NextRequest) {
   }
 
   try {
-    jwt.verify( accessToken, process.env.ACCESS_TOKEN_SECRET! );
+    jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET!);
 
     return NextResponse.next();
-  } catch (error: unknown) {
-  if (error instanceof TokenExpiredError) {
+  } catch (error) {
+
+    if (!(error instanceof TokenExpiredError)) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
@@ -52,9 +53,9 @@ export async function proxy(req: NextRequest) {
       };
 
       const newAccessToken = jwt.sign(
-         { role: payload.role },
+        { role: payload.role, },
         process.env.ACCESS_TOKEN_SECRET!,
-        { expiresIn: "15m" }
+        { expiresIn: "15m", }
       );
 
       const response = NextResponse.next();
