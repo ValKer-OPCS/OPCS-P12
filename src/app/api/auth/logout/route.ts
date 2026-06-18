@@ -1,4 +1,7 @@
 import { NextResponse } from "next/server";
+import { Redis } from "@upstash/redis";
+
+const redis = Redis.fromEnv();
 
 export async function POST() {
   const response = NextResponse.json({
@@ -20,6 +23,8 @@ export async function POST() {
     path: "/",
     maxAge: 0,
   });
+
+  await redis.del("admin:refresh_token");
 
   return response;
 }

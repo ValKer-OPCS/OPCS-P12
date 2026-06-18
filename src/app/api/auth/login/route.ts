@@ -3,6 +3,9 @@ export const runtime = "nodejs";
 import { NextResponse } from "next/server";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { Redis } from "@upstash/redis";
+
+const redis = Redis.fromEnv();
 
 export async function POST(req: Request) {
   const { username, password } = await req.json();
@@ -45,6 +48,14 @@ export async function POST(req: Request) {
     process.env.REFRESH_TOKEN_SECRET!,
     {
       expiresIn: "7d",
+    }
+  );
+
+  await redis.set(
+    "admin:refresh_token",
+    refreshToken,
+    {
+      ex: 60 * 60 * 24 * 7,
     }
   );
 

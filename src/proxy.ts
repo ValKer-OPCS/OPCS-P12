@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import jwt, { TokenExpiredError } from "jsonwebtoken";
+import { Redis } from "@upstash/redis";
+
+const redis = Redis.fromEnv();
 
 const publicRoutes = [
   { path: "/api/auth", method: "POST" },
@@ -27,46 +30,81 @@ export async function proxy(req: NextRequest) {
   const accessToken = req.cookies.get("accessToken")?.value;
 
   if (!accessToken) {
-    return new NextResponse("Unauthorized", { status: 401 });
+    return new NextResponse("Unauthorized", {
+      status: 401,
+    });
   }
 
   try {
-    jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET!);
+    jwt.verify(
+      accessToken,
+      process.env.ACCESS_TOKEN_SECRET!
+    );
 
     return NextResponse.next();
   } catch (error) {
-
     if (!(error instanceof TokenExpiredError)) {
-      return new NextResponse("Unauthorized", { status: 401 });
+      return new NextResponse("Unauthorized", {
+        status: 401,
+      });
     }
 
-    const refreshToken = req.cookies.get("refreshToken")?.value;
+    const refreshToken =
+      req.cookies.get("refreshToken")?.value;
 
     if (!refreshToken) {
-      return new NextResponse("Unauthorized", { status: 401 });
+      return new NextResponse("Unauthorized", {
+        status: 401,
+      });
     }
 
     try {
-      const payload = jwt.verify( refreshToken, process.env.REFRESH_TOKEN_SECRET!
+      const storedToken =
+        await redis.get<string>("admin:refresh_token");
+
+      if (!storedToken) {
+        return new NextResponse("Unauthorized", {
+          status: 401,
+        });
+      }
+
+      if (storedToken !== refreshToken) {
+        return new NextResponse("Unauthorized", {
+          status: 401,
+        });
+      }
+
+      const payload = jwt.verify(
+        refreshToken,
+        process.env.REFRESH_TOKEN_SECRET!
       ) as {
         role: string;
       };
 
       const newAccessToken = jwt.sign(
-        { role: payload.role, },
+        {
+          role: payload.role,
+        },
         process.env.ACCESS_TOKEN_SECRET!,
-        { expiresIn: "15m", }
+        {
+          expiresIn: "15m",
+        }
       );
 
       const response = NextResponse.next();
 
-      response.cookies.set("accessToken", newAccessToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
-        path: "/",
-        maxAge: 60 * 15,
-      });
+      response.cookies.set(
+        "accessToken",
+        newAccessToken,
+        {
+          httpOnly: true,
+          secure:
+            process.env.NODE_ENV === "production",
+          sameSite: "strict",
+          path: "/",
+          maxAge: 60 * 15,
+        }
+      );
 
       return response;
     } catch {
