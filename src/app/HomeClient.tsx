@@ -1,5 +1,3 @@
-"use client";
-
 import dynamic from "next/dynamic";
 import Skills from "@/containers/Skills/Skills";
 import AboutMe from "@/containers/AboutMe/AboutMe";
