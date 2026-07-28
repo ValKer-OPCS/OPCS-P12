@@ -56,12 +56,8 @@ export default function AuthForm() {
         <div className={styles.field}>
           <label className={styles.label}>
             Nom d&apos;utilisateur
-            <input
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              required
-              className={styles.input}
+            <input type="text" value={username} onChange={(e) => setUsername(e.target.value)}
+              required className={styles.input}
             />
           </label>
         </div>

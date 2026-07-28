@@ -9,14 +9,14 @@ import { FaReact, FaNodeJs, FaSass } from "react-icons/fa";
 import { SiNextdotjs, SiTypescript, SiMongodb } from "react-icons/si";
 
 export default function Skills() {
-  const iconsMap: Record<string, React.ReactNode> = {
-    react: <FaReact />,
-    next: <SiNextdotjs />,
-    ts: <SiTypescript />,
-    sass: <FaSass />,
-    node: <FaNodeJs />,
-    mongo: <SiMongodb />
-  };
+ const iconsMap: Record<string, React.ReactNode> = {
+  react: <FaReact aria-hidden="true" />,
+  next: <SiNextdotjs aria-hidden="true" />,
+  ts: <SiTypescript aria-hidden="true" />,
+  sass: <FaSass aria-hidden="true" />,
+  node: <FaNodeJs aria-hidden="true" />,
+  mongo: <SiMongodb aria-hidden="true" />,
+};
 
   return (
     <section id="skills" className={style.skillsSection}>

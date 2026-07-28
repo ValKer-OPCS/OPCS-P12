@@ -70,17 +70,28 @@
 
 .links {
   display: flex;
-  gap: 16px;
   align-self: center;
-  gap: 30px;
+  gap: 60px;
   position: relative;
-  bottom: -5px;
+  /* bottom: -5px; */
 }
 
 .links a {
   color: white;
   text-decoration: none;
   font-family: Montserrat;
+  font-size: 18px;
+}
+.links a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 44px;
+  padding: 0 16px;
+
+  color: white;
+  text-decoration: none;
   font-size: 18px;
 }
 
@@ -134,7 +145,7 @@
 
   .links {
     justify-content: center;
-    gap: 20px;
+    gap: 45px;
     margin: 10px;
 
   }
