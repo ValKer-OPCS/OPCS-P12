@@ -77,6 +77,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           {children}
           <Footer />
         </div>
+        <Analytics />
       </body>
     </html>
   );

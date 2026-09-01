@@ -18,6 +18,10 @@ jest.mock("@/containers/Footer/Footer", () => ({
   default: () => <footer data-testid="mock-footer" />,
 }));
 
+jest.mock("@vercel/analytics/next", () => ({
+  Analytics: () => null,
+}));
+
 describe("RootLayout", () => {
   it("renders html and body structure", () => {
     render(
