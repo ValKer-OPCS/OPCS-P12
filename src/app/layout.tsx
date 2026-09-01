@@ -4,6 +4,7 @@ import "./globals.scss";
 import Header from "@/containers/Header/Header";
 import Footer from "@/containers/Footer/Footer";
 import type { ReactNode } from "react";
+import { Analytics } from "@vercel/analytics/next";
 
 import { Inter } from "next/font/google";
 
